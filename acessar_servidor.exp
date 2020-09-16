@@ -1,0 +1,12 @@
+#!/usr/bin/expect -f
+#  ./ssh.exp password 192.168.1.11 id
+set pass "P34CgtTL773DVBuZ"
+set server "metodotraderinfalivel.kinghost.net"
+set name "metodotraderinfalivel"
+
+spawn ssh $name@$server
+match_max 100000
+expect "*?assword:*"
+send -- "$pass\r"
+send -- "\r"
+interact
