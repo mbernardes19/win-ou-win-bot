@@ -107,7 +107,7 @@ const updateValidUsersDiasAteFimAssinatura = async () => {
 }
 
 const sendMessageToUsersCloseToEndAssinatura = async (users: User[]) => {
-    const mensagemAviso = (dias) => `Olá! Acabei de verificar que daqui a ${dias} dia(s) seu plano vai expirar.\n\nSe você quer continuar lucrando com a família Método Trader Infalível tendo acesso ao curso completo, lista de sinais diária, operações ao vivo e sinais em tempo real, acesse agora seu email para verificar ou acesse direto a Monetizze e gere seu boleto.\n\nQualquer dúvida chame um dos suportes abaixo ⤵️`
+    const mensagemAviso = (dias) => `Olá! Acabei de verificar que daqui a ${dias} dia(s) seu plano vai expirar.\n\nSe você quer continuar lucrando com a família Win ou Win tendo acesso ao curso completo, lista de sinais diária, operações ao vivo e sinais em tempo real, acesse agora seu email para verificar ou acesse direto a Monetizze e gere seu boleto.\n\nQualquer dúvida chame um dos suportes abaixo ⤵️`
     const telegramClient = CacheService.get<Telegram>('telegramClient');
     const usersCloseToEndAssinatura = users.filter(user => user.getUserData().diasAteFimDaAssinatura <= 3)
     const actions = []

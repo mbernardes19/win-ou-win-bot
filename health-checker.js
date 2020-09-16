@@ -14,7 +14,7 @@ async function runDeploy() {
 
 app.get('/', (req, res) => {
     console.log('GET /')
-    res.send('Hello TRADER INFALÍVEL').status(200)
+    res.send('Hello WIN WIN').status(200)
 })
 app.get('/revive', async (req, res) => {
     await runDeploy()
