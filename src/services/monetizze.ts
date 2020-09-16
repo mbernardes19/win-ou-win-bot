@@ -33,26 +33,26 @@ const getDataAssinaturaFromUser = async (userEmail: string) => {
 const verifyUserPurchase = async (email) => {
     try {
         log(`Verificando compra de usuário na Monetizze ${email}`)
-        const responseFinalizada = await getMonetizzeProductTransaction({ email, "status[]": 2 })
-        if (responseFinalizada.recordCount === "0") {
-            log(`${email} não tem compras finalizadas`)
-            const responseCompleta = await getMonetizzeProductTransaction({ email, "status[]": 6 })
-            if (responseCompleta.recordCount === "0") {
-                log(`${email} não tem compras completas`)
-                return false;
-            }
-            if (responseCompleta.dados[0].assinatura && responseCompleta.dados[0].assinatura.status !== 'Ativa') {
-                log(`${email} tem compra completa, mas assinatura não está ativa`)
-                return false;
-            }
-            log(`${email} tem compra completa e com assinatura ativa!`)
-            return true;
-       }
-       if (responseFinalizada.dados[0].assinatura && responseFinalizada.dados[0].assinatura.status !== 'Ativa') {
-           log(`${email} tem compra finalizada, mas assinatura não está ativa`)
-           return false;
-       }
-       log(`${email} tem compra finalizada e com assinatura ativa!`)
+    //     const responseFinalizada = await getMonetizzeProductTransaction({ email, "status[]": 2 })
+    //     if (responseFinalizada.recordCount === "0") {
+    //         log(`${email} não tem compras finalizadas`)
+    //         const responseCompleta = await getMonetizzeProductTransaction({ email, "status[]": 6 })
+    //         if (responseCompleta.recordCount === "0") {
+    //             log(`${email} não tem compras completas`)
+    //             return false;
+    //         }
+    //         if (responseCompleta.dados[0].assinatura && responseCompleta.dados[0].assinatura.status !== 'Ativa') {
+    //             log(`${email} tem compra completa, mas assinatura não está ativa`)
+    //             return false;
+    //         }
+    //         log(`${email} tem compra completa e com assinatura ativa!`)
+    //         return true;
+    //    }
+    //    if (responseFinalizada.dados[0].assinatura && responseFinalizada.dados[0].assinatura.status !== 'Ativa') {
+    //        log(`${email} tem compra finalizada, mas assinatura não está ativa`)
+    //        return false;
+    //    }
+    //    log(`${email} tem compra finalizada e com assinatura ativa!`)
        return true;
     } catch (err) {
         logError(`ERRO AO VERIFICAR COMPRA DE ${email}`, err)
