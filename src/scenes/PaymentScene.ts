@@ -4,6 +4,7 @@ import { log } from '../logger';
 import { cartao, boleto } from '../services/validate';
 
 const paymentScene = new BaseScene('payment')
+const NEXT_SCENE = process.env.SELECT_PLANO_FEATURE === 'true' ? 'plano' : 'name'
 
 paymentScene.command('reiniciar', ctx => {
     log(`Reiniciando bot por ${ctx.chat.id}`)
@@ -33,14 +34,14 @@ paymentScene.action('cartao_de_credito', async (ctx) => {
     await ctx.answerCbQuery();
     await savePaymentMethod('cartao_de_credito');
     await askForPlano(ctx)
-    await ctx.scene.enter('plano');
+    await ctx.scene.enter(NEXT_SCENE);
 })
 
 paymentScene.action('boleto', async (ctx) => {
     await ctx.answerCbQuery();
     await savePaymentMethod('boleto');
     await askForPlano(ctx)
-    await ctx.scene.enter('plano');
+    await ctx.scene.enter(NEXT_SCENE);
 })
 
 paymentScene.use(async (ctx) => {
@@ -50,7 +51,7 @@ paymentScene.use(async (ctx) => {
         }
         await savePaymentMethod('cartao_de_credito');
         await askForPlano(ctx);
-        return await ctx.scene.enter('plano');
+        return await ctx.scene.enter(NEXT_SCENE);
     }
     if (boleto(ctx)) {
         if (!ctx.message) {
@@ -58,7 +59,7 @@ paymentScene.use(async (ctx) => {
         }
         await savePaymentMethod('boleto');
         await askForPlano(ctx);
-        return await ctx.scene.enter('plano');
+        return await ctx.scene.enter(NEXT_SCENE);
     }
     await ctx.reply('Por favor, escolha uma das opções acima');
 });
@@ -69,14 +70,16 @@ const savePaymentMethod = async (paymentMethod) => {
 }
 
 const showPlanoOptions = async (ctx) => {
-    log(`Enviando opções de PLANO para ${ctx.chat.id}`)
-    const planos = Markup.inlineKeyboard([
-        [Markup.callbackButton('🥈 Prata/Silver', '78914')],
-        [Markup.callbackButton('🥇 Gold', '90965')],
-        [Markup.callbackButton('💎 Diamond', '90966')],
-        [Markup.callbackButton('💎⬛ Black Diamond', '91261')]
-    ])
-    await ctx.reply("Qual foi o plano que você contratou?", Extra.markup(planos))
+    if (NEXT_SCENE === 'plano') {
+        log(`Enviando opções de PLANO para ${ctx.chat.id}`)
+        const planos = Markup.inlineKeyboard([
+            [Markup.callbackButton('🥈 Prata/Silver', '78914')],
+            [Markup.callbackButton('🥇 Gold', '90965')],
+            [Markup.callbackButton('💎 Diamond', '90966')],
+            [Markup.callbackButton('💎⬛ Black Diamond', '91261')]
+        ])
+        await ctx.reply("Qual foi o plano que você contratou?", Extra.markup(planos))
+    }
 }
 
 const askForPlano = async (ctx) => {
