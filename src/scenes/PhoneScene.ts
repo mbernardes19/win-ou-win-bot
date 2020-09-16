@@ -47,7 +47,7 @@ const askForPhoneAgain = async (ctx) => {
 
 phoneScene.use(async (ctx) => {
     await confirmPhone(ctx);
-    await savePhoneNumber(ctx.message.text);
+    await savePhoneNumber(ctx.message.text.replace(/ /g, ""));
 });
 
 const confirmPhone = async (ctx) => {
