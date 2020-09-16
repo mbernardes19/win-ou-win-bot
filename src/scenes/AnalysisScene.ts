@@ -173,7 +173,7 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
     try {
         [chatName, chatId] = await getChat(plano, dataAssinatura);
         linkChatEspecifico = getChatInviteLink(chatId);
-        linkCanalGeral = getChatInviteLink(process.env.ID_CANAL_GERAL)
+        linkCanalGeral = getChatInviteLink(process.env.ID_CANAL_TESTE)
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
         await enviarMensagemDeErroAoAdmin(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err);
@@ -184,8 +184,7 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
     log(`Canal Específico (${plano}) enviado para ${ctx.chat.id}`)
 
     const teclado = Markup.inlineKeyboard([
-        Markup.urlButton('Canal Geral', linkCanalGeral),
-        Markup.urlButton(chatName, linkChatEspecifico)
+        Markup.urlButton('Canal Teste', linkCanalGeral),
     ])
     await ctx.reply('Seja bem-vindo(a)!')
     await ctx.reply('Clique agora nos dois botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))

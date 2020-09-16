@@ -51,7 +51,7 @@ const removeInvalidUsers = () => {
         }
 
         invalidUsers.forEach((invalidUser, index) => {
-            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_GERAL, invalidUser.id_telegram));
+            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_TESTE, invalidUser.id_telegram));
             usersToKick.push(telegramClient.kickChatMember(chatIds[index][1], invalidUser.id_telegram));
             usersToKick.push(markUserAsKicked(invalidUser.id_telegram, connection))
         })

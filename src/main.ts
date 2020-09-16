@@ -42,12 +42,11 @@ bot.command('canais', async ctx => {
             return await ctx.reply('Você já ativou sua assinatura Monetizze comigo, porém seu status de assinatura na Monetizze não está como ativo, regularize sua situação com a Monetizze para ter acesso aos canais.');
         }
         const { plano, dataAssinatura } = user.getUserData()
-        const [chatName, chatId] = await getChat(plano, dataAssinatura);
-        const specificChatInviteLink = getChatInviteLink(chatId);
-        const generalChatInviteLink = getChatInviteLink(process.env.ID_CANAL_GERAL);
+        // const [chatName, chatId] = await getChat(plano, dataAssinatura);
+        // const specificChatInviteLink = getChatInviteLink(chatId);
+        const generalChatInviteLink = getChatInviteLink(process.env.ID_CANAL_TESTE);
         const teclado = Markup.inlineKeyboard([
-            Markup.urlButton('Canal Geral', generalChatInviteLink),
-            Markup.urlButton(chatName, specificChatInviteLink)
+            Markup.urlButton('Canal Teste', generalChatInviteLink),
         ]);
         await ctx.reply('É pra já!', Extra.markup(teclado))
         await updateViewChats(ctx.chat.id, connection);
