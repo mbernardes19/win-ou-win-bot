@@ -137,8 +137,8 @@ const getUserData = async (ctx): Promise<UserData> => {
         userData.fullName = CacheService.getFullName();
         userData.phone = CacheService.getPhone();
         userData.email = CacheService.getEmail();
-        userData.dataAssinatura = await getUserDataAssinatura();
-        userData.diasAteFimDaAssinatura = await pegarDiasSobrandoDeAssinatura(CacheService.getPlano(), CacheService.getEmail())
+        userData.dataAssinatura = '2020-04-10' // await getUserDataAssinatura();
+        userData.diasAteFimDaAssinatura = 10 // await pegarDiasSobrandoDeAssinatura(CacheService.getPlano(), CacheService.getEmail())
 
         log(`Username Telegram definido ${userData.username}`)
         log(`Id Telegram definido ${userData.telegramId}`)
@@ -171,8 +171,8 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
     let linkCanalGeral;
     log(`Enviando canais de Telegram para usuário ${ctx.chat.id}`)
     try {
-        [chatName, chatId] = await getChat(plano, dataAssinatura);
-        linkChatEspecifico = getChatInviteLink(chatId);
+        // [chatName, chatId] = await getChat(plano, dataAssinatura);
+        // linkChatEspecifico = getChatInviteLink(chatId);
         linkCanalGeral = getChatInviteLink(process.env.ID_CANAL_TESTE)
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
@@ -188,7 +188,7 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
     ])
     await ctx.reply('Seja bem-vindo(a)!')
     await ctx.reply('Clique agora nos dois botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
-    return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
+    // return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
 }
 
 const endConversation = async (ctx) => {
