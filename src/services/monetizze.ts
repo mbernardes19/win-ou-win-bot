@@ -1,6 +1,5 @@
 import { getMonetizzeProductTransaction } from './request';
 import { log, logError } from '../logger';
-import CacheService from './cache';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
 
@@ -61,18 +60,6 @@ const verifyUserPurchase = async (email) => {
     }
 }
 
-const confirmPlano = async (email) => {
-    try {
-        log(`Confirmando plano de usuário na Monetizze ${email}`)
-        return true
-        // const responseCompletas = await getMonetizzeProductTransaction({ email })
-        // return responseCompletas.dados[0].plano.codigo !== CacheService.getPlano() ? false : true;
-    } catch (err) {
-        logError(`ERRO AO VERIFICAR PLANO NA COMPRA DE ${email}`, err)
-        throw err
-    }
-}
-
 const checkIfPaymentMethodIsBoleto = async (email) => {
     try {
         log(`Verificando se a compra na Monetizze de ${email} foi feita por boleto e está aguardando pagamento`)
@@ -99,4 +86,4 @@ const getUsersNewStatusAssinatura = async (users: User[]) => {
     }
 }
 
-export { getDiscountCouponIdFromUser, verifyUserPurchase, confirmPlano, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }
+export { getDiscountCouponIdFromUser, verifyUserPurchase, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }

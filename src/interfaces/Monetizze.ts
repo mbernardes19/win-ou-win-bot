@@ -23,11 +23,10 @@ export interface MonetizzeTransaction {
     produto: Produto,
     venda: Venda,
     comissoes?: Comissoes | null,
-    comprador: Comprador,
-    produtor: Produtor,
+    comprador?: Comprador,
+    produtor?: Produtor,
     assinatura?: Assinatura,
-    plano?: Plano,
-    downloads: string
+    plano?: Plano
 }
 
 export interface Produto {
@@ -57,21 +56,10 @@ export interface Venda {
     dataFinalizada?: string | null;
     meioPagamento: string;
     formaPagamento: string;
-    garantiaRestante: number;
     status: string;
     valor: string;
-    quantidade: string;
     valorRecebido: string;
-    tipo_frete: string;
-    frete: string;
     cupom?: string | null;
-    src: string;
-    utm_source: string;
-    utm_medium: string;
-    utm_content: string;
-    utm_campaign: string;
-    linkBoleto: string;
-    linha_digitavel: string;
     boleto_vencimento?: string;
 }
 

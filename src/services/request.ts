@@ -60,4 +60,8 @@ const getMonetizzeProductTransaction = async (options?: MonetizzeTrasactionOptio
     }
 }
 
+const Request = {getMonetizzeProductTransaction}
+
+export default Request
+
 export { createRequest, createAuthorizedRequest, auth, getTransactions, getMonetizzeTransaction, getMonetizzeProductTransaction}
