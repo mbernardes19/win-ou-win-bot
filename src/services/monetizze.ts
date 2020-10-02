@@ -3,20 +3,6 @@ import { log, logError } from '../logger';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
 
-const getDiscountCouponIdFromUser = async (userEmail, userPlano) => {
-    log(`Pegando cupom de desconto de usuário ${userEmail}`)
-    try {
-        // const transaction = await getMonetizzeProductTransaction({ email: userEmail })
-        // log(`Pegando cupom de desconto do usuário na Monetizze`);
-        // const transactionFromPlano = transaction.dados.filter(dado => dado.venda.plano === userPlano);
-        // return transactionFromPlano[0].venda.cupom !== null ? transactionFromPlano[0].venda.cupom : '0';
-        return '0'
-    } catch (err) {
-        logError(`ERRO AO PEGAR CUPOM DE DESCONTO DO USUÁRIO ${userEmail}`, err)
-        throw err;
-    }
-}
-
 const getDataAssinaturaFromUser = async (userEmail: string) => {
     log(`Pegando data de assinatura de usuário ${userEmail}`)
     try {
@@ -86,4 +72,4 @@ const getUsersNewStatusAssinatura = async (users: User[]) => {
     }
 }
 
-export { getDiscountCouponIdFromUser, verifyUserPurchase, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }
+export { verifyUserPurchase, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }

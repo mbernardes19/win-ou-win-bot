@@ -1,6 +1,6 @@
 import { BaseScene, Context, Markup, Extra, Telegram } from 'telegraf';
 import CacheService from '../services/cache';
-import { getDiscountCouponIdFromUser, verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser } from '../services/monetizze';
+import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser } from '../services/monetizze';
 import UserData from '../model/UserData';
 import User from '../model/User';
 import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
@@ -92,16 +92,6 @@ analysisScene.enter(async (ctx) => {
     }
 })
 
-const getUserDiscountCoupon = async () => {
-    const email = CacheService.getEmail();
-    const plano = CacheService.getPlano();
-    try {
-        return await getDiscountCouponIdFromUser(email, plano)
-    } catch (err) {
-        throw err;
-    }
-}
-
 const getUserDataAssinatura = async () => {
     const email = CacheService.getEmail();
     try {
@@ -118,7 +108,7 @@ const getUserData = async (ctx): Promise<UserData> => {
         const telegramClient = CacheService.get<Telegram>('telegramClient');
         const chat = await telegramClient.getChat(ctx.chat.id)
         userData.telegramId = ctx.chat.id.toString();
-        userData.discountCouponId = await getUserDiscountCoupon();
+        userData.discountCouponId = '0';
         userData.username = chat.username;
         userData.paymentMethod = CacheService.getPaymentMethod();
         userData.plano = CacheService.getPlano();

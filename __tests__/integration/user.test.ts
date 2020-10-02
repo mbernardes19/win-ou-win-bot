@@ -45,7 +45,6 @@ describe('User DB operations', () => {
 
         // Then
         const addedUser = await getUserByTelegramId(userData.telegramId, connection)
-        console.log(addedUser)
         expect(addedUser.id_telegram).toBe(12313)
         expect(addedUser.cupom_desconto).toBe(0)
         expect(addedUser.user_telegram).toBe('teste')
