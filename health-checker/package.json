@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "health-checker.js",
+  "build": "node health-checker.js",
+  "start": "node health-checker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
