@@ -1,11 +1,10 @@
 import Cron from 'node-cron';
-import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, getAllValidUsersWithPaymentBoleto } from '../dao';
+import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura } from '../dao';
 import { connection } from '../db';
 import CacheService from './cache';
 import { Telegram } from 'telegraf';
 import { getChat } from './chatResolver';
 import { log, logError, enviarMensagemDeErroAoAdmin } from '../logger';
-import User from '../model/User';
 import { createCsvFile } from './csv';
 import { sendReportToEmail } from './email';
 
@@ -13,7 +12,6 @@ const startCronJobs = () => {
     try {
         removeInvalidUsers();
         updateValidUsersStatusAssinatura();
-        updateValidUsersDiasAteFimAssinatura();
         sendCsvReportToEmail();
     } catch (err) {
         logError(`ERRO AO EXECUTAR CRONJOB`, err)
@@ -84,45 +82,6 @@ const updateValidUsersStatusAssinatura = () => {
         }
     });
 }
-
-const updateValidUsersDiasAteFimAssinatura = async () => {
-    const eachDayAt8AM = '0 8 * * *';
-    const test = '* * * * *';
-
-    Cron.schedule(eachDayAt8AM, async () => {
-        log(`⏱️ Iniciando cronjob para atualizar dias até fim de assinatura de usuários válidos`)
-
-        let allUsers = [];
-        try {
-            allUsers = await getAllValidUsers(connection);
-            await updateUsersDiasAteFimAssinatura(allUsers, connection);
-            const allUsersUpdated = await getAllValidUsersWithPaymentBoleto(connection);
-            await sendMessageToUsersCloseToEndAssinatura(allUsersUpdated)
-        } catch (err) {
-            logError(`ERRO AO ATUALIZAR DIAS ATÉ FIM DE ASSINATURA DE USUÁRIOS ${allUsers}`, err);
-            enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO ATUALIZAR DIAS ATÉ FIM DE ASSINATURA DE USUÁRIOS VÁLIDOS ${JSON.stringify(allUsers)}`, err)
-            throw err;
-        }
-    })
-}
-
-const sendMessageToUsersCloseToEndAssinatura = async (users: User[]) => {
-    const mensagemAviso = (dias) => `Olá! Acabei de verificar que daqui a ${dias} dia(s) seu plano vai expirar.\n\nSe você quer continuar lucrando com a família Win ou Win tendo acesso ao curso completo, lista de sinais diária, operações ao vivo e sinais em tempo real, acesse agora seu email para verificar ou acesse direto a Monetizze e gere seu boleto.\n\nQualquer dúvida chame um dos suportes abaixo ⤵️`
-    const telegramClient = CacheService.get<Telegram>('telegramClient');
-    const usersCloseToEndAssinatura = users.filter(user => user.getUserData().diasAteFimDaAssinatura <= 3)
-    const actions = []
-    usersCloseToEndAssinatura.forEach(user => {
-        if (user.getUserData().diasAteFimDaAssinatura === 3) {
-            actions.push(telegramClient.sendMessage(user.getUserData().telegramId, mensagemAviso(3), {reply_markup: {inline_keyboard: [[{text: '👉 SUPORTE 1', url:'t.me/juliasantanana'}], [{text: '👉 SUPORTE 2', url: 't.me/diego_sti'}], [{text: '👉 SUPORTE 3', url: 't.me/julianocba'}]]}}))
-        }
-        if (user.getUserData().diasAteFimDaAssinatura === 2) {
-            actions.push(telegramClient.sendMessage(user.getUserData().telegramId, mensagemAviso(2), {reply_markup: {inline_keyboard: [[{text: '👉 SUPORTE 1', url:'t.me/juliasantanana'}], [{text: '👉 SUPORTE 2', url: 't.me/diego_sti'}], [{text: '👉 SUPORTE 3', url: 't.me/julianocba'}]]}}))
-        }
-        if (user.getUserData().diasAteFimDaAssinatura === 1) {
-            actions.push(telegramClient.sendMessage(user.getUserData().telegramId, mensagemAviso(1), {reply_markup: {inline_keyboard: [[{text: '👉 SUPORTE 1', url:'t.me/juliasantanana'}], [{text: '👉 SUPORTE 2', url: 't.me/diego_sti'}], [{text: '👉 SUPORTE 3', url: 't.me/julianocba'}]]}}))
-        }
-    })
-};
 
 const sendCsvReportToEmail = () => {
     const eachDayAt9AM = '0 9 * * *';

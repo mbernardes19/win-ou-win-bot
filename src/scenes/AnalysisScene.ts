@@ -1,6 +1,6 @@
 import { BaseScene, Context, Markup, Extra, Telegram } from 'telegraf';
 import CacheService from '../services/cache';
-import { getDiscountCouponIdFromUser, verifyUserPurchase, checkIfPaymentMethodIsBoleto, confirmPlano, getDataAssinaturaFromUser } from '../services/monetizze';
+import { getDiscountCouponIdFromUser, verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser } from '../services/monetizze';
 import UserData from '../model/UserData';
 import User from '../model/User';
 import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
@@ -40,13 +40,11 @@ analysisScene.enter(async (ctx) => {
     await ctx.reply('Verificando sua compra nos servidores da Monetizze...');
     const email = CacheService.getEmail();
     let isPurchaseApproved;
-    let isPlanoConfirmed;
     try {
         log(`Iniciando análise de compra ${ctx.chat.id}`)
         isPurchaseApproved = await verifyUserPurchase(email);
         if (isPurchaseApproved) {
             log(`Compra confirmada! ${ctx.chat.id}`)
-            isPlanoConfirmed = await confirmPlano(email);
         }
     } catch (err) {
         logError(`Erro ao verificar compra de usuário na Monetizze`, err)
@@ -56,11 +54,6 @@ analysisScene.enter(async (ctx) => {
     }
 
     if (isPurchaseApproved) {
-        if (!isPlanoConfirmed) {
-            log(`Compra de ${ctx.chat.id} foi confirmada, mas o plano informado não é o mesmo da compra`)
-            await ctx.reply('O plano que você selecionou não é o mesmo que consta na compra na Monetizze. Por favor comece nossa conversa novamente com /reiniciar e atribua o plano correto.');
-            return await endConversation(ctx);
-        }
         log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
         try {
             const userData = await getUserData(ctx);
@@ -90,11 +83,6 @@ analysisScene.enter(async (ctx) => {
         }
         if (isPaymentBoleto) {
             log(`Pagamento de ${ctx.chat.id} foi em boleto e está aguardando pagamento`)
-            if (!isPlanoConfirmed) {
-                log(`Plano informado por ${ctx.chat.id} não é o mesmo da compra`)
-                await ctx.reply('O plano que você selecionou não é o mesmo que consta na compra na Monetizze. Por favor comece nossa conversa novamente com /reiniciar e atribua o plano correto.');
-                return await endConversation(ctx);
-            }
             await ctx.reply('Sua compra foi iniciada, porém o seu boleto ainda não foi pago/compensado. Você pode ver o status do seu boleto acessando monetizze.com.br . Quando estiver compensado volte e inicie uma conversa comigo novamente!')
             return await endConversation(ctx);
         }
@@ -137,8 +125,8 @@ const getUserData = async (ctx): Promise<UserData> => {
         userData.fullName = CacheService.getFullName();
         userData.phone = CacheService.getPhone();
         userData.email = CacheService.getEmail();
-        userData.dataAssinatura = '2020-04-10' // await getUserDataAssinatura();
-        userData.diasAteFimDaAssinatura = 10 // await pegarDiasSobrandoDeAssinatura(CacheService.getPlano(), CacheService.getEmail())
+        userData.dataAssinatura = await getUserDataAssinatura();
+        userData.diasAteFimDaAssinatura = 0
 
         log(`Username Telegram definido ${userData.username}`)
         log(`Id Telegram definido ${userData.telegramId}`)
