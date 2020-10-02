@@ -5,6 +5,15 @@ import { getUsersNewStatusAssinatura } from './services/monetizze';
 import { log, logError } from './logger';
 import { pegarDiasSobrandoDeAssinatura } from './services/diasAssinatura';
 
+const clearUsersTable = async (connection: Connection) => {
+    const query = util.promisify(connection.query).bind(connection)
+    try {
+        await query(`truncate Users`)
+    } catch (err) {
+        throw err
+    }
+}
+
 
 const addUserToDatabase = async (user: User, connection: Connection) => {
     const userData = user.getUserData();
@@ -159,4 +168,4 @@ const updateViewChats = async (telegramId: string|number, connection: Connection
     }
 }
 
-export { addUserToDatabase, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }
+export { addUserToDatabase, clearUsersTable, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }
