@@ -5,7 +5,7 @@
   "main": "health-checker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node health-checker.js",
+    "build": "",
     "start": "node health-checker.js"
   },
   "keywords": [],
