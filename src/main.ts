@@ -42,11 +42,13 @@ bot.command('canais', async ctx => {
             return await ctx.reply('Você já ativou sua assinatura Monetizze comigo, porém seu status de assinatura na Monetizze não está como ativo, regularize sua situação com a Monetizze para ter acesso aos canais.');
         }
         const { plano, dataAssinatura } = user.getUserData()
-        // const [chatName, chatId] = await getChat(plano, dataAssinatura);
-        // const specificChatInviteLink = getChatInviteLink(chatId);
-        const generalChatInviteLink = getChatInviteLink(process.env.ID_CANAL_TESTE);
+        const linkCanalWin30 = getChatInviteLink(process.env.ID_CANAL_WIN_30);
+        const linkCanalWinVip = getChatInviteLink(process.env.ID_CANAL_WIN_VIP);
+        const linkCanalWinMix = getChatInviteLink(process.env.ID_CANAL_WIN_MIX);
         const teclado = Markup.inlineKeyboard([
-            Markup.urlButton('Canal Teste', generalChatInviteLink),
+            Markup.urlButton('Canal WIN 30', linkCanalWin30),
+            Markup.urlButton('Canal WIN VIP', linkCanalWinVip),
+            Markup.urlButton('Canal WIN MIX', linkCanalWinMix),
         ]);
         await ctx.reply('É pra já!', Extra.markup(teclado))
         await updateViewChats(ctx.chat.id, connection);
@@ -68,7 +70,13 @@ bot.command('canais', async ctx => {
 // });
 
 bot.on('message', async ctx => {
-    if (ctx.chat.id === parseInt(process.env.ID_GRUPO_BLACK_DIAMOND, 10)) {
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_30, 10)) {
+        return;
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_VIP, 10)) {
+        return;
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return;
     }
     await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero')

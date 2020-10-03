@@ -6,7 +6,13 @@ const welcomeScene = new BaseScene('welcome')
 
 welcomeScene.command('reiniciar', async ctx => {
     log(`Reiniciando bot por ${ctx.chat.id}`)
-    if (ctx.chat.id === parseInt(process.env.ID_GRUPO_BLACK_DIAMOND, 10)) {
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_30, 10)) {
+        return await ctx.scene.leave();
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_VIP, 10)) {
+        return await ctx.scene.leave();
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return await ctx.scene.leave();
     }
     CacheService.clearAllUserData()
@@ -32,7 +38,13 @@ welcomeScene.command('suporte', async ctx => {
 })
 
 welcomeScene.enter(async (ctx) => {
-    if (ctx.chat.id === parseInt(process.env.ID_GRUPO_BLACK_DIAMOND, 10)) {
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_30, 10)) {
+        return await ctx.scene.leave();
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_VIP, 10)) {
+        return await ctx.scene.leave();
+    }
+    if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return await ctx.scene.leave();
     }
     await welcome(ctx);

@@ -143,30 +143,30 @@ const saveUser = async (newUser: User) => {
 }
 
 const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatura: string) => {
-    let chatName;
-    let chatId;
-    let linkChatEspecifico;
-    let linkCanalGeral;
+    let linkCanalWin30;
+    let linkCanalWinVip;
+    let linkCanalWinMix;
     log(`Enviando canais de Telegram para usuário ${ctx.chat.id}`)
     try {
-        // [chatName, chatId] = await getChat(plano, dataAssinatura);
-        // linkChatEspecifico = getChatInviteLink(chatId);
-        linkCanalGeral = getChatInviteLink(process.env.ID_CANAL_TESTE)
+        linkCanalWin30 = getChatInviteLink(process.env.ID_CANAL_WIN_30);
+        linkCanalWinVip = getChatInviteLink(process.env.ID_CANAL_WIN_VIP);
+        linkCanalWinMix = getChatInviteLink(process.env.ID_CANAL_WIN_MIX);
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
         await enviarMensagemDeErroAoAdmin(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err);
         throw err;
     }
 
-    log(`Canal Geral enviado para ${ctx.chat.id}`)
-    log(`Canal Específico (${plano}) enviado para ${ctx.chat.id}`)
+    log(`Canais enviados para ${ctx.chat.id}`)
 
     const teclado = Markup.inlineKeyboard([
-        Markup.urlButton('Canal Teste', linkCanalGeral),
+        Markup.urlButton('Canal WIN 30', linkCanalWin30),
+        Markup.urlButton('Canal WIN VIP', linkCanalWinVip),
+        Markup.urlButton('Canal WIN MIX', linkCanalWinMix),
     ])
     await ctx.reply('Seja bem-vindo(a)!')
     await ctx.reply('Clique agora nos dois botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
-    // return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
+    return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
 }
 
 const endConversation = async (ctx) => {

@@ -34,23 +34,11 @@ const removeInvalidUsers = () => {
         } catch (err) {
             throw err;
         }
-        invalidUsers.forEach(invalidUser => {
-            chatIdsPromises.push(getChat(invalidUser.plano, invalidUser.data_assinatura))
-        })
-
-        let chatIds;
-        try {
-            chatIds = await Promise.all(chatIdsPromises);
-            log(`⏱️ Pegando chats com usuários inválidos ${chatIds}`)
-        } catch (err) {
-            logError(`⏱️ ERRO AO PEGAR CHATS COM USUÁRIOS INVÁLIDOS ${invalidUsers}`, err)
-            await enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO PEGAR CHATS COM USUÁRIOS INVÁLIDOS ${invalidUsers}`, err);
-            throw err;
-        }
 
         invalidUsers.forEach((invalidUser, index) => {
-            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_TESTE, invalidUser.id_telegram));
-            usersToKick.push(telegramClient.kickChatMember(chatIds[index][1], invalidUser.id_telegram));
+            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_WIN_30, invalidUser.id_telegram));
+            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_WIN_VIP, invalidUser.id_telegram));
+            usersToKick.push(telegramClient.kickChatMember(process.env.ID_CANAL_WIN_MIX, invalidUser.id_telegram));
             usersToKick.push(markUserAsKicked(invalidUser.id_telegram, connection))
         })
 
