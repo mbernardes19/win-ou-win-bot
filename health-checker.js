@@ -1,6 +1,12 @@
 const app = require('express')()
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const localtunnel = require('localtunnel');
+
+(async () => {
+    const tunnel = await localtunnel({ port: 21571 })
+    console.log(tunnel.url);
+})()
 
 async function runDeploy() {
     try {
