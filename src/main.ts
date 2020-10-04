@@ -14,13 +14,10 @@ import { getChatInviteLink } from './services/chatInviteLink';
 import User from "./model/User";
 import { startCronJobs } from './services/cronjobs';
 import { getMonetizzeProductTransaction } from './services/request'
-import localTunnel from 'localtunnel';
-
-let url;
+import ngrok from 'ngrok';
 
 (async () => {
-    const tunnel = await localTunnel(3000)
-    url = tunnel.url;
+    const url = await ngrok.connect(3000)
     log(url);
 
     const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
