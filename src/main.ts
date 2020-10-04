@@ -14,9 +14,20 @@ import { getChatInviteLink } from './services/chatInviteLink';
 import User from "./model/User";
 import { startCronJobs } from './services/cronjobs';
 import { getMonetizzeProductTransaction } from './services/request'
+import localTunnel from 'localtunnel';
 
-const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
+let url;
+
+(async () => {
+    const tunnel = await localTunnel(3000)
+    url = tunnel.url;
+
+    const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
 const bot = new Telegraf(botToken);
+
+bot.telegram.setWebhook(url+'/secret')
+
+
 
 CacheService.save('telegramClient', bot.telegram);
 
@@ -81,9 +92,11 @@ bot.on('message', async ctx => {
     }
     await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero')
 })
-bot.launch()
+// bot.launch()
 
 const app: Express = App();
+
+app.use(bot.webhookCallback('/secret'))
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Olá!');
@@ -91,3 +104,5 @@ app.get('/', (req: Request, res: Response) => {
 const PORT = process.env.PORT_TRADER_INFALIVEL_BOT_DIST_MAIN || process.env.PORT_MAIN || 3000
 console.log('PORTA', PORT)
 app.listen(PORT, () => log('conectado na porta 3000'))
+})();
+
