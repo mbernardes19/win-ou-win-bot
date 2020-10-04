@@ -21,6 +21,7 @@ let url;
 (async () => {
     const tunnel = await localTunnel(3000)
     url = tunnel.url;
+    log(url);
 
     const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
 const bot = new Telegraf(botToken);
