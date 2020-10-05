@@ -67,16 +67,12 @@ bot.command('canais', async ctx => {
     }
 });
 
-// bot.command('suporte', async (ctx) => {
-//     const resp = await getMonetizzeProductTransaction({email: 'Matheus.viegas@gmail.com'})
-//     resp.dados.map(dado => console.log(dado.assinatura, dado.venda))
-//     const teclado = Markup.inlineKeyboard([
-//         [Markup.urlButton('👉 SUPORTE 1', 't.me/juliasantanana')],
-//         [Markup.urlButton('👉 SUPORTE 2', 't.me/diego_sti')],
-//         [Markup.urlButton('👉 SUPORTE 3', 't.me/julianocba')],
-//     ]);
-//     await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
-// });
+bot.command('suporte', async (ctx) => {
+    const teclado = Markup.inlineKeyboard([
+        [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]
+    ]);
+    await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
+});
 
 bot.on('message', async ctx => {
     if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_30, 10)) {
@@ -88,7 +84,7 @@ bot.on('message', async ctx => {
     if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return;
     }
-    await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero')
+    await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero\n/suporte - Entrar em contato com o suporte')
 })
 // bot.launch()
 

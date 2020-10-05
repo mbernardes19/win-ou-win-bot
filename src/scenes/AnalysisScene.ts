@@ -27,9 +27,7 @@ analysisScene.command('parar', async ctx => {
 analysisScene.command('suporte', async ctx => {
     log(`Enviando suporte para ${ctx.chat.id}`)
     const teclado = Markup.inlineKeyboard([
-        [Markup.urlButton('👉 SUPORTE 1', 't.me/juliasantanana')],
-        [Markup.urlButton('👉 SUPORTE 2', 't.me/diego_sti')],
-        [Markup.urlButton('👉 SUPORTE 3', 't.me/julianocba')],
+        [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]
     ]);
     await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
     CacheService.clearAllUserData()
