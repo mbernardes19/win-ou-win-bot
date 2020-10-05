@@ -17,7 +17,7 @@ import { getMonetizzeProductTransaction } from './services/request'
 import ngrok from 'ngrok';
 
 (async () => {
-    const url = await ngrok.connect(3000)
+    const url = await ngrok.connect({ authtoken: '1bZwtwe9g8AI8iq74rFXyC0jVMV_5DoFRUPRT76UKzvWhqV6d', addr: 3000 })
     log(url);
 
     const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
