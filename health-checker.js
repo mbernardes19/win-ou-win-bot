@@ -14,7 +14,7 @@ async function runDeploy() {
 }
 
 (async () => {
-    const url = await ngrok.connect({auth: '1iZM941vpA0t6pM9Yongcnp6vmS_2FLBEysByJ3ijLvEQo6Tj', addr: 3001});
+    const url = await ngrok.connect({authtoken: '1iZM941vpA0t6pM9Yongcnp6vmS_2FLBEysByJ3ijLvEQo6Tj', addr: 3001});
     console.log(url);
 
     app.get('/', (req, res) => {
