@@ -27,6 +27,6 @@ console.log('PORTA', PORT)
 app.listen(PORT, () => console.log(`Health checker rodando na porta ${PORT}`));
 
 (async () => {
-    const url = await ngrok.connect(21571);
+    const url = await ngrok.connect({auth: '1iVUTWFWa6vXK7PCN9RQjqCcoV5_2A5ZRpKAmpd85izJMNvaa', addr: 21571});
     console.log(url);
 })()
