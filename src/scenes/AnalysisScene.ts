@@ -158,12 +158,12 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
     log(`Canais enviados para ${ctx.chat.id}`)
 
     const teclado = Markup.inlineKeyboard([
-        Markup.urlButton('Canal WIN 30', linkCanalWin30),
-        Markup.urlButton('Canal WIN VIP', linkCanalWinVip),
-        Markup.urlButton('Canal WIN MIX', linkCanalWinMix),
+        Markup.urlButton('WIN 30', linkCanalWin30),
+        Markup.urlButton('WIN VIP', linkCanalWinVip),
+        Markup.urlButton('WIN MIX', linkCanalWinMix),
     ])
     await ctx.reply('Seja bem-vindo(a)!')
-    await ctx.reply('Clique agora nos dois botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
+    await ctx.reply('Clique agora nos três botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
     return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
 }
 
