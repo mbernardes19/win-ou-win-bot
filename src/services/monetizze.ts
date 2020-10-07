@@ -2,8 +2,6 @@ import { getMonetizzeProductTransaction } from './request';
 import { log, logError } from '../logger';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
-import { CoursePlatform } from '../model/CoursePlatform';
-import { response } from 'express';
 
 // export default class MonetizzeService implements CoursePlatform {
 //     async verifyPurchase(email: string): Promise<boolean> {
