@@ -2,6 +2,40 @@ import { getMonetizzeProductTransaction } from './request';
 import { log, logError } from '../logger';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
+import { CoursePlatform } from '../model/CoursePlatform';
+import { response } from 'express';
+
+// export default class MonetizzeService implements CoursePlatform {
+//     async verifyPurchase(email: string): Promise<boolean> {
+//         try {
+//             log(`Verificando compra de usuário na Monetizze ${email}`)
+//             const responseFinalizada = await getMonetizzeProductTransaction({ email, "status[]": 2 })
+//             if (responseFinalizada.recordCount === "0") {
+//                 log(`${email} não tem compras finalizadas`)
+//                 const responseCompleta = await getMonetizzeProductTransaction({ email, "status[]": 6 })
+//                 if (responseCompleta.recordCount === "0") {
+//                     log(`${email} não tem compras completas`)
+//                     return false;
+//                 }
+//                 if (responseCompleta.dados[0].assinatura && responseCompleta.dados[0].assinatura.status !== 'Ativa') {
+//                     log(`${email} tem compra completa, mas assinatura não está ativa`)
+//                     return false;
+//                 }
+//                 log(`${email} tem compra completa e com assinatura ativa!`)
+//                 return true;
+//            }
+//            if (responseFinalizada.dados[0].assinatura && responseFinalizada.dados[0].assinatura.status !== 'Ativa') {
+//                log(`${email} tem compra finalizada, mas assinatura não está ativa`)
+//                return false;
+//            }
+//            log(`${email} tem compra finalizada e com assinatura ativa!`)
+//            return true;
+//         } catch (err) {
+//             logError(`ERRO AO VERIFICAR COMPRA DE ${email}`, err)
+//             throw err
+//         }
+//     }
+// }
 
 const getDataAssinaturaFromUser = async (userEmail: string) => {
     log(`Pegando data de assinatura de usuário ${userEmail}`)
@@ -20,6 +54,7 @@ const verifyUserPurchase = async (email) => {
     try {
         log(`Verificando compra de usuário na Monetizze ${email}`)
         const responseFinalizada = await getMonetizzeProductTransaction({ email, "status[]": 2 })
+        log(responseFinalizada)
         if (responseFinalizada.recordCount === "0") {
             log(`${email} não tem compras finalizadas`)
             const responseCompleta = await getMonetizzeProductTransaction({ email, "status[]": 6 })

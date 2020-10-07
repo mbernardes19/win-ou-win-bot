@@ -20,7 +20,7 @@ const logWarning = (message: string|string[]) => {
     const time = getTimeString();
     console.log(time, 'WARNING', message);
 }
-const log = (message: string|string[]) => {
+const log = (message: any) => {
     const time = getTimeString();
     console.log(time, 'INFO', message);
 }
