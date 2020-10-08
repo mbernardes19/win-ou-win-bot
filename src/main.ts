@@ -59,6 +59,14 @@ bot.command('canais', async ctx => {
     }
 });
 
+bot.command('t35t3', async (ctx) => {
+    // 1099938207 (1)
+    // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
+    // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
+    // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
+    // await bot.telegram.sendMessage(721557882, 'Contato do suporte ⤵️', Extra.markup(teclado))
+});
+
 bot.command('suporte', async (ctx) => {
     const teclado = Markup.inlineKeyboard([
         [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]

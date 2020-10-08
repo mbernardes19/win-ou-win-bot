@@ -62,7 +62,18 @@ const updateValidUsersStatusAssinatura = () => {
         let allUsers = [];
         try {
             allUsers = await getAllValidUsers(connection);
-            await updateUsersStatusAssinatura(allUsers, connection);
+            let start = 0
+            let theresold = 10
+            const intervalId = setInterval(async () => {
+                await updateUsersStatusAssinatura(allUsers.slice(start, theresold), connection);
+                if (theresold >= allUsers.length) {
+                    log('Todos usuários atualizados com sucesso')
+                    clearInterval(intervalId)
+                } else {
+                    start = theresold;
+                    theresold += 10;
+                }
+            }, 10000)
         } catch (err) {
             logError(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS VÁLIDOS ${allUsers}`, err)
             enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS VÁLIDOS ${allUsers}`, err)

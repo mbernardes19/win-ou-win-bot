@@ -75,7 +75,7 @@ const getAllUsers = async (connection: Connection): Promise<any[]> => {
 const getAllInvalidNonKickedUsers = async (connection: Connection) => {
     const query = util.promisify(connection.query).bind(connection)
     try {
-        return await query(`select * from Users where not status_assinatura='ativa' and kickado='N' and dias_ate_fim_assinatura <= 0`);
+        return await query(`select * from Users where not status_assinatura='ativa' and kickado='N'`);
     } catch (err) {
         logError(`ERRO AO PEGAR TODOS OS USUÁRIOS INVÁLIDOS NÃO KICKADOS DO BANCO DE DADOS`, err);
         throw err;
