@@ -33,7 +33,6 @@ async function runDeploy() {
     const query = util.promisify(connection.query).bind(connection)
     const url = await ngrok.connect({authtoken: '1iZM941vpA0t6pM9Yongcnp6vmS_2FLBEysByJ3ijLvEQo6Tj', addr: 3001});
     await query(`update URLs set url='${url}' where id=1`);
-    connection.end();
 
     console.log(url);
 
