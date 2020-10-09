@@ -11,7 +11,14 @@ async function runDeploy() {
         console.log('stdout', stdout)
         console.log('stderr', stderr)
     } catch (err) {
-        console.log(err)
+        try {
+            console.log(err)
+            const {stdout, stderr} = await exec('nvm use 12.18.4 && pm2 restart main')
+            console.log('stdout', stdout)
+            console.log('stderr', stderr)
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
