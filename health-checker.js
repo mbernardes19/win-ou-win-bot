@@ -2,8 +2,9 @@ const app = require('express')()
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const ngrok = require('ngrok');
-const mysql = require('mysql2');
+const { connection } = require('./db');
 const dotenv = require('dotenv').config();
+
 
 async function runDeploy() {
     try {
@@ -23,13 +24,6 @@ async function runDeploy() {
 }
 
 (async () => {
-    const connection = mysql.createConnection({
-        host: process.env.DB_HOST,
-        database: process.env.DB_DATABASE,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        dateStrings: true
-    })
     const query = util.promisify(connection.query).bind(connection)
     const url = await ngrok.connect({authtoken: '1iZM941vpA0t6pM9Yongcnp6vmS_2FLBEysByJ3ijLvEQo6Tj', addr: 3001});
     await query(`update URLs set url='${url}' where id=1`);
