@@ -84,7 +84,11 @@ bot.on('message', async ctx => {
     if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return;
     }
-    await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero\n/suporte - Entrar em contato com o suporte')
+    try {
+        await ctx.reply('Olá, sou o Bot do Win ou Win 🤖💵!\nSegue abaixo meus comandos:\n\n/start - Começar nossa conversa\n/parar - Parar nossa conversa\n/reiniciar - Começar nossa conversa do zero\n/suporte - Entrar em contato com o suporte')
+    } catch (err) {
+        console.log(err)
+    }
 })
 bot.launch()
 
