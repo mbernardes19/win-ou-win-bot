@@ -2,6 +2,7 @@ import { getMonetizzeProductTransaction } from './request';
 import { log, logError } from '../logger';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
+import CacheService from './cache';
 
 // export default class MonetizzeService implements CoursePlatform {
 //     async verifyPurchase(email: string): Promise<boolean> {
@@ -105,4 +106,13 @@ const getUsersNewStatusAssinatura = async (users: User[]) => {
     }
 }
 
-export { verifyUserPurchase, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }
+const confirmPlano = async (userEmail: string) => {
+    const response = await getMonetizzeProductTransaction({email: userEmail})
+    if (response.dados[0].plano.nome.includes(CacheService.getPlano())) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export { verifyUserPurchase, confirmPlano, getDataAssinaturaFromUser, checkIfPaymentMethodIsBoleto, getUsersNewStatusAssinatura }

@@ -1,7 +1,7 @@
 import { BaseScene, Markup, Extra } from 'telegraf';
 import CacheService from '../services/cache';
 import { log } from '../logger';
-import { silver, gold, diamond, blackDiamond } from '../services/validate';
+import { start, premium, master } from '../services/validate';
 import { Planos } from '../model/Planos';
 
 const planoScene = new BaseScene('plano')
@@ -28,57 +28,44 @@ planoScene.command('suporte', async ctx => {
     return await ctx.scene.leave()
 })
 
-planoScene.action(Planos.SILVER, async (ctx) => {
+planoScene.action(Planos.START, async (ctx) => {
     await ctx.answerCbQuery();
-    await savePlano(Planos.SILVER);
+    await savePlano(Planos.START);
     await ctx.scene.enter('name');
 })
 
-planoScene.action(Planos.GOLD, async (ctx) => {
+planoScene.action(Planos.PREMIUM, async (ctx) => {
     await ctx.answerCbQuery();
-    await savePlano(Planos.GOLD);
+    await savePlano(Planos.PREMIUM);
     await ctx.scene.enter('name');
 })
 
-planoScene.action(Planos.DIAMOND, async (ctx) => {
+planoScene.action(Planos.MASTER, async (ctx) => {
     await ctx.answerCbQuery();
-    await savePlano(Planos.DIAMOND);
-    await ctx.scene.enter('name');
-})
-
-planoScene.action(Planos.BLACK_DIAMOND, async (ctx) => {
-    await ctx.answerCbQuery();
-    await savePlano(Planos.BLACK_DIAMOND);
+    await savePlano(Planos.MASTER);
     await ctx.scene.enter('name');
 })
 
 planoScene.use(async (ctx) => {
-    if (silver(ctx)) {
+    if (start(ctx)) {
         if (!ctx.message) {
             await ctx.answerCbQuery()
         }
-        await savePlano(Planos.SILVER);
+        await savePlano(Planos.START);
         return await ctx.scene.enter('name');
     }
-    if (gold(ctx)) {
+    if (premium(ctx)) {
         if (!ctx.message) {
             await ctx.answerCbQuery()
         }
-        await savePlano(Planos.GOLD);
+        await savePlano(Planos.PREMIUM);
         return await ctx.scene.enter('name');
     }
-    if (diamond(ctx)) {
+    if (master(ctx)) {
         if (!ctx.message) {
             await ctx.answerCbQuery()
         }
-        await savePlano(Planos.DIAMOND);
-        return await ctx.scene.enter('name');
-    }
-    if (blackDiamond(ctx)) {
-        if (!ctx.message) {
-            await ctx.answerCbQuery()
-        }
-        await savePlano(Planos.BLACK_DIAMOND);
+        await savePlano(Planos.MASTER);
         return await ctx.scene.enter('name');
     }
     await ctx.reply('Por favor, escolha uma das opções acima');

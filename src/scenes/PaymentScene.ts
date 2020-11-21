@@ -71,10 +71,9 @@ const showPlanoOptions = async (ctx) => {
     if (NEXT_SCENE === 'plano') {
         log(`Enviando opções de PLANO para ${ctx.chat.id}`)
         const planos = Markup.inlineKeyboard([
-            [Markup.callbackButton('🥈 Prata/Silver', '78914')],
-            [Markup.callbackButton('🥇 Gold', '90965')],
-            [Markup.callbackButton('💎 Diamond', '90966')],
-            [Markup.callbackButton('💎⬛ Black Diamond', '91261')]
+            [Markup.callbackButton('START', 'START')],
+            [Markup.callbackButton('PREMIUM', 'PREMIUM')],
+            [Markup.callbackButton('MASTER', 'MASTER')],
         ])
         await ctx.reply("Qual foi o plano que você contratou?", Extra.markup(planos))
     }

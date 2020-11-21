@@ -20,34 +20,31 @@ const pegarDiasSobrandoDeAssinatura = async (plano: string, email: string) => {
     }
     let diasDeAssinatura
     switch (plano) {
-        case Planos.SILVER:
+        case Planos.START:
             diasDeAssinatura = 30;
             break;
-        case Planos.GOLD:
+        case Planos.PREMIUM:
             diasDeAssinatura = 90;
             break;
-        case Planos.DIAMOND:
-            diasDeAssinatura = 180;
-            break;
-        case Planos.BLACK_DIAMOND:
-            diasDeAssinatura = 365
+        case Planos.MASTER:
+            diasDeAssinatura = 365;
             break;
     }
     if (response.dados[0].venda.formaPagamento === 'Boleto') {
-        if (response.dados[0].plano.codigo === Planos.SILVER && parseInt(response.dados[0].venda.valor, 10) > 100) {
+        if (response.dados[0].plano.codigo === Planos.START && parseInt(response.dados[0].venda.valor, 10) > 100) {
             const dataUltimoPagamento = toDate(response.dados[0].venda.dataInicio)
             const hoje = new Date();
             const diasDeUso = differenceInDays(hoje, dataUltimoPagamento)
             diasDeAssinatura = 35;
             const diasParaTerminar = diasDeAssinatura - diasDeUso + 1
             return diasParaTerminar
-        } else if (response.dados[0].plano.codigo === Planos.SILVER && parseInt(response.dados[0].venda.valor, 10) === 100) {
+        } else if (response.dados[0].plano.codigo === Planos.START && parseInt(response.dados[0].venda.valor, 10) === 100) {
             const dataUltimoPagamento = toDate(response.dados[0].venda.dataInicio)
             const hoje = new Date();
             const diasDeUso = differenceInDays(hoje, dataUltimoPagamento)
             const diasParaTerminar2 = diasDeAssinatura - diasDeUso + 1
             return diasParaTerminar2
-        } else if (response.dados[0].plano.codigo !== Planos.SILVER) {
+        } else if (response.dados[0].plano.codigo !== Planos.START) {
             const dataUltimoPagamento = toDate(response.dados[0].venda.dataInicio)
             const hoje = new Date();
             const diasDeUso = differenceInDays(hoje, dataUltimoPagamento)

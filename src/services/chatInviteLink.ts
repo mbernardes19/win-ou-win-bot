@@ -32,11 +32,11 @@ const getChatInviteLink = (chatId: number|string) => {
     log(`Pegando link para chat ${chatId}`)
     switch(chatId) {
         case ID_CANAL_WIN_30:
-            return linkCanalWin30;
+            return {name: 'WIN 30', invite: linkCanalWin30};
         case ID_CANAL_WIN_VIP:
-            return linkCanalWinVip;
+            return {name: 'WIN VIP', invite: linkCanalWinVip};
         case ID_CANAL_WIN_MIX:
-            return linkCanalWinMix;
+            return {name: 'WIN MIX', invite: linkCanalWinMix};
         default:
             throw new Error(`Chat buscado não existe ${chatId}`)
     }

@@ -1,10 +1,9 @@
 const CARTAO = /^((cart[a|ã]o)|(cart[a|ã]o de cr[e|é]dito))$/i
 const BOLETO = /bolet[a|o]/i
 const PLANO = {
-    SILVER: /^silver$|^prata$|^p$|^s$|^pratasilver$|^silverprata$|^prata\/silver$|^silver\/prata$/i,
-    GOLD: /^gold$|^ouro$|^g$/i,
-    DIAMOND: /^diamond$|^diamante$|^d$/i,
-    BLACK_DIAMOND: /^black diamond$|^blackdiamond$|^black$|^b$|^bd$/i
+    START: /^start$/i,
+    PREMIUM: /^premium$/i,
+    MASTER: /^master$/i,
 }
 const SIM = /^(sim|s)$/i
 const NAO = /^(n[a|ã]o|n)$/i

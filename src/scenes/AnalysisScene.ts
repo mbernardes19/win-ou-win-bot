@@ -1,14 +1,13 @@
 import { BaseScene, Context, Markup, Extra, Telegram } from 'telegraf';
 import CacheService from '../services/cache';
-import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser } from '../services/monetizze';
+import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser, confirmPlano } from '../services/monetizze';
 import UserData from '../model/UserData';
 import User from '../model/User';
 import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
 import { addUserToDatabase } from '../dao';
 import { connection } from '../db';
-import { getChat } from '../services/chatResolver';
+import { getChats } from '../services/chatResolver';
 import { getChatInviteLink } from '../services/chatInviteLink';
-import { pegarDiasSobrandoDeAssinatura } from '../services/diasAssinatura';
 
 const analysisScene = new BaseScene('analysis')
 
@@ -52,23 +51,29 @@ analysisScene.enter(async (ctx) => {
     }
 
     if (isPurchaseApproved) {
-        log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
-        try {
-            const userData = await getUserData(ctx);
-            const newUser = new User(userData);
-            await saveUser(newUser);
-            await enviarCanaisDeTelegram(ctx, userData.plano, userData.dataAssinatura);
-            await endConversation(ctx);
-        } catch (err) {
-            if (err.errno === 1062) {
-                logError(`Usuário já existe no banco de dados`, err);
-                await enviarMensagemDeErroAoAdmin(`Usuário já existe no banco de dados`, err);
-                await ctx.reply(`Você já ativou sua assinatura Monettize comigo antes.`)
-                return await endConversation(ctx);
-            } else {
-                await ctx.reply(`Sua compra na Monetizze foi confirmada, porém ocorreu um erro ao ativar sua assinatura na Monetizze.`)
-                return await endConversation(ctx);
+        const isPlanoConfirmed = await confirmPlano(email)
+        if (isPlanoConfirmed) {
+            log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
+            try {
+                const userData = await getUserData(ctx);
+                const newUser = new User(userData);
+                await saveUser(newUser);
+                await enviarCanaisDeTelegram(ctx, userData.plano, userData.dataAssinatura);
+                await endConversation(ctx);
+            } catch (err) {
+                if (err.errno === 1062) {
+                    logError(`Usuário já existe no banco de dados`, err);
+                    await enviarMensagemDeErroAoAdmin(`Usuário já existe no banco de dados`, err);
+                    await ctx.reply(`Você já ativou sua assinatura Monetizze comigo antes.`)
+                    return await endConversation(ctx);
+                } else {
+                    await ctx.reply(`Sua compra na Monetizze foi confirmada, porém ocorreu um erro ao ativar sua assinatura na Monetizze.`)
+                    return await endConversation(ctx);
+                }
             }
+        } else {
+            await ctx.reply(`Sua compra na Monetizze foi confirmada, porém o plano que você selecionou não é o mesmo que consta nela.\nPor favor, inicie uma conversa comigo novamente com o comando /start e infome o plano correto.`)
+            return await endConversation(ctx);
         }
     } else {
         let isPaymentBoleto;
@@ -141,14 +146,12 @@ const saveUser = async (newUser: User) => {
 }
 
 const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatura: string) => {
-    let linkCanalWin30;
-    let linkCanalWinVip;
-    let linkCanalWinMix;
+    let links: number[];
+    let chatInvites;
     log(`Enviando canais de Telegram para usuário ${ctx.chat.id}`)
     try {
-        linkCanalWin30 = getChatInviteLink(process.env.ID_CANAL_WIN_30);
-        linkCanalWinVip = getChatInviteLink(process.env.ID_CANAL_WIN_VIP);
-        linkCanalWinMix = getChatInviteLink(process.env.ID_CANAL_WIN_MIX);
+        links = getChats(CacheService.getPlano())
+        chatInvites = links.map(link => getChatInviteLink(link))
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
         await enviarMensagemDeErroAoAdmin(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err);
@@ -157,11 +160,9 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
 
     log(`Canais enviados para ${ctx.chat.id}`)
 
-    const teclado = Markup.inlineKeyboard([
-        Markup.urlButton('WIN 30', linkCanalWin30),
-        Markup.urlButton('WIN VIP', linkCanalWinVip),
-        Markup.urlButton('WIN MIX', linkCanalWinMix),
-    ])
+    const invites = chatInvites.map(chatInvite => Markup.urlButton(chatInvite.name, chatInvite.invite))
+
+    const teclado = Markup.inlineKeyboard(invites)
     await ctx.reply('Seja bem-vindo(a)!')
     await ctx.reply('Clique agora nos três botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
     return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
