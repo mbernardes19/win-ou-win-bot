@@ -3,7 +3,6 @@ import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValid
 import { connection } from '../db';
 import CacheService from './cache';
 import { Telegram } from 'telegraf';
-import { getChat } from './chatResolver';
 import { log, logError, enviarMensagemDeErroAoAdmin } from '../logger';
 import { createCsvFile } from './csv';
 import { sendReportToEmail } from './email';

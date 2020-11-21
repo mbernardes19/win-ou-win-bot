@@ -1,19 +1,19 @@
 import { BaseScene, Extra, Markup } from 'telegraf';
-import CacheService from '../services/cache';
 import { log } from '../logger';
 import { confirmado, negado } from '../services/validate';
+import { SceneContextMessageUpdate } from 'telegraf/typings/stage';
 
 const nameScene = new BaseScene('name');
 
 nameScene.command('reiniciar', ctx => {
     log(`Reiniciando bot por ${ctx.chat.id}`)
-    CacheService.clearAllUserData()
-    return ctx.scene.enter('welcome')
+    ctx.scene.session.state = {}
+    return ctx.scene.enter('welcome', ctx.scene.state)
 })
 
 nameScene.command('parar', async ctx => {
     log(`Parando bot por ${ctx.chat.id}`)
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {}
     return await ctx.scene.leave()
 })
 
@@ -23,12 +23,12 @@ nameScene.command('suporte', async ctx => {
         [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]
     ]);
     await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {}
     return await ctx.scene.leave()
 })
 
 nameScene.enter(async (ctx) => {
-    if (!CacheService.getFullName()) {
+    if (!ctx.scene.session.state['fullName']) {
         return await askForFullName(ctx);
     }
     await askForFullNameAgain(ctx);
@@ -36,7 +36,7 @@ nameScene.enter(async (ctx) => {
 
 nameScene.use(async (ctx) => {
     await confirmFullName(ctx);
-    await saveFullName(ctx.message.text);
+    await saveFullName(ctx.message.text, ctx);
 });
 
 const askForFullName = async (ctx) => {
@@ -51,35 +51,35 @@ const askForFullNameAgain = async (ctx) => {
 const confirmFullName = async (ctx) => {
     const confirmacao = Markup.inlineKeyboard([Markup.callbackButton('👍 Sim', 'sim'), Markup.callbackButton('👎 Não', 'nao')])
     await ctx.reply(`Confirmando... seu nome completo é ${ctx.message.text}?`, Extra.inReplyTo(ctx.update.message.message_id).markup(confirmacao));
-    return ctx.scene.enter('confirm_name');
+    return ctx.scene.enter('confirm_name', ctx.scene.state);
 }
 
-const saveFullName = async (fullname) => {
+const saveFullName = async (fullName, ctx: SceneContextMessageUpdate) => {
     log('salvou o nome')
-    CacheService.saveFullName(fullname);
-    log(`Nome completo definido ${fullname}`);
+    ctx.scene.session.state = {...ctx.scene.session.state, fullName}
+    log(`Nome completo definido ${fullName}`);
 }
 
 const confirmNameScene = new BaseScene('confirm_name');
 
 confirmNameScene.action('sim', async (ctx) => {
-    const nome = CacheService.getFullName();
+    const nome = ctx.scene.session.state['fullName'];
     await ctx.reply(`Beleza, ${nome.includes(' ') ? nome.substring(0, nome.indexOf(' ')) : nome}!`);
-    return ctx.scene.enter('phone');
+    return ctx.scene.enter('phone', ctx.scene.state);
 });
 
 confirmNameScene.action('nao', async (ctx) => {
-    return ctx.scene.enter('name');
+    return ctx.scene.enter('name', ctx.scene.state);
 });
 
 confirmNameScene.use(async (ctx) => {
     if (confirmado(ctx)) {
-        const nome = CacheService.getFullName();
+        const nome = ctx.scene.session.state['fullName'];
         await ctx.reply(`Beleza, ${nome.includes(' ') ? nome.substring(0, nome.indexOf(' ')) : nome}!`);
-        return ctx.scene.enter('phone');
+        return ctx.scene.enter('phone', ctx.scene.state);
     }
     if (negado(ctx)) {
-        return ctx.scene.enter('name');
+        return ctx.scene.enter('name', ctx.scene.state);
     }
     await ctx.reply('Por favor, escolha uma das opções acima');
 });

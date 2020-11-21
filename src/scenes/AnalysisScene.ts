@@ -1,4 +1,4 @@
-import { BaseScene, Context, Markup, Extra, Telegram } from 'telegraf';
+import { BaseScene, Markup, Extra, Telegram } from 'telegraf';
 import CacheService from '../services/cache';
 import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser, confirmPlano } from '../services/monetizze';
 import UserData from '../model/UserData';
@@ -8,18 +8,19 @@ import { addUserToDatabase } from '../dao';
 import { connection } from '../db';
 import { getChats } from '../services/chatResolver';
 import { getChatInviteLink } from '../services/chatInviteLink';
+import { SceneContextMessageUpdate, Scene } from 'telegraf/typings/stage';
 
 const analysisScene = new BaseScene('analysis')
 
 analysisScene.command('reiniciar', ctx => {
     log(`Reiniciando bot por ${ctx.chat.id}`)
-    CacheService.clearAllUserData()
-    return ctx.scene.enter('welcome')
+    ctx.scene.session.state = {};
+    return ctx.scene.enter('welcome', ctx.scene.state)
 })
 
 analysisScene.command('parar', async ctx => {
     log(`Parando bot por ${ctx.chat.id}`)
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {};
     return await ctx.scene.leave()
 })
 
@@ -29,13 +30,13 @@ analysisScene.command('suporte', async ctx => {
         [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]
     ]);
     await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {};
     return await ctx.scene.leave()
 })
 
 analysisScene.enter(async (ctx) => {
     await ctx.reply('Verificando sua compra nos servidores da Monetizze...');
-    const email = CacheService.getEmail();
+    const email = ctx.scene.session.state['email'];
     let isPurchaseApproved;
     try {
         log(`Iniciando análise de compra ${ctx.chat.id}`)
@@ -51,7 +52,7 @@ analysisScene.enter(async (ctx) => {
     }
 
     if (isPurchaseApproved) {
-        const isPlanoConfirmed = await confirmPlano(email)
+        const isPlanoConfirmed = await confirmPlano(email, ctx)
         if (isPlanoConfirmed) {
             log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
             try {
@@ -95,8 +96,8 @@ analysisScene.enter(async (ctx) => {
     }
 })
 
-const getUserDataAssinatura = async () => {
-    const email = CacheService.getEmail();
+const getUserDataAssinatura = async (ctx: SceneContextMessageUpdate) => {
+    const email = ctx.scene.session.state['email'];
     try {
         return await getDataAssinaturaFromUser(email);
     } catch (err) {
@@ -104,7 +105,7 @@ const getUserDataAssinatura = async () => {
     }
 }
 
-const getUserData = async (ctx): Promise<UserData> => {
+const getUserData = async (ctx: SceneContextMessageUpdate): Promise<UserData> => {
     log(`Pegando dados de usuário ${ctx.chat.id}`);
     try {
         const userData: UserData = new UserData();
@@ -113,12 +114,12 @@ const getUserData = async (ctx): Promise<UserData> => {
         userData.telegramId = ctx.chat.id.toString();
         userData.discountCouponId = '0';
         userData.username = chat.username;
-        userData.paymentMethod = CacheService.getPaymentMethod();
-        userData.plano = CacheService.getPlano();
-        userData.fullName = CacheService.getFullName();
-        userData.phone = CacheService.getPhone();
-        userData.email = CacheService.getEmail();
-        userData.dataAssinatura = await getUserDataAssinatura();
+        userData.paymentMethod = ctx.scene.session.state['paymentMethod'];
+        userData.plano = ctx.scene.session.state['plano'];
+        userData.fullName = ctx.scene.session.state['fullName'];
+        userData.phone = ctx.scene.session.state['phone'];
+        userData.email = ctx.scene.session.state['email'];
+        userData.dataAssinatura = await getUserDataAssinatura(ctx);
         userData.diasAteFimDaAssinatura = 0
 
         log(`Username Telegram definido ${userData.username}`)
@@ -145,12 +146,12 @@ const saveUser = async (newUser: User) => {
     }
 }
 
-const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatura: string) => {
+const enviarCanaisDeTelegram = async (ctx: SceneContextMessageUpdate, plano: string, dataAssinatura: string) => {
     let links: number[];
     let chatInvites;
     log(`Enviando canais de Telegram para usuário ${ctx.chat.id}`)
     try {
-        links = getChats(CacheService.getPlano())
+        links = getChats(ctx.scene.session.state['email'])
         chatInvites = links.map(link => getChatInviteLink(link))
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
@@ -170,7 +171,7 @@ const enviarCanaisDeTelegram = async (ctx: Context, plano: string, dataAssinatur
 
 const endConversation = async (ctx) => {
     log(`Conversa com ${ctx.chat.id} finalizada`)
-    CacheService.clearAllUserData();
+    ctx.scene.session.state = {};
     return ctx.scene.leave();
 }
 

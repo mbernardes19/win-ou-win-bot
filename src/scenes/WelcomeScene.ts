@@ -1,5 +1,4 @@
 import { BaseScene, Markup, Extra } from 'telegraf';
-import CacheService from '../services/cache';
 import { log } from '../logger';
 
 const welcomeScene = new BaseScene('welcome')
@@ -15,13 +14,13 @@ welcomeScene.command('reiniciar', async ctx => {
     if (ctx.chat.id === parseInt(process.env.ID_CANAL_WIN_MIX, 10)) {
         return await ctx.scene.leave();
     }
-    CacheService.clearAllUserData()
-    return await ctx.scene.enter('welcome')
+    ctx.scene.session.state = {};
+    return await ctx.scene.enter('welcome', ctx.scene.state)
 })
 
 welcomeScene.command('parar', async ctx => {
     log(`Parando bot por ${ctx.chat.id}`)
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {};
     return await ctx.scene.leave()
 })
 
@@ -31,7 +30,7 @@ welcomeScene.command('suporte', async ctx => {
         [Markup.urlButton('👉 SUPORTE', 't.me/winouwin')]
     ]);
     await ctx.reply('Para falar com o suporte, clique abaixo ⤵️', Extra.markup(teclado))
-    CacheService.clearAllUserData()
+    ctx.scene.session.state = {};
     return await ctx.scene.leave()
 })
 
@@ -47,7 +46,7 @@ welcomeScene.enter(async (ctx) => {
     }
     await welcome(ctx);
     await showPaymentOptions(ctx);
-    await ctx.scene.enter('payment')
+    await ctx.scene.enter('payment', ctx.scene.state)
 })
 
 const welcome = async (ctx) => {

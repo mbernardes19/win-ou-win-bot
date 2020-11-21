@@ -2,7 +2,7 @@ import { getMonetizzeProductTransaction } from './request';
 import { log, logError } from '../logger';
 import User from '../model/User';
 import { MonetizzeTransactionResponse } from '../interfaces/Monetizze'
-import CacheService from './cache';
+import { SceneContextMessageUpdate } from 'telegraf/typings/stage';
 
 // export default class MonetizzeService implements CoursePlatform {
 //     async verifyPurchase(email: string): Promise<boolean> {
@@ -106,9 +106,9 @@ const getUsersNewStatusAssinatura = async (users: User[]) => {
     }
 }
 
-const confirmPlano = async (userEmail: string) => {
+const confirmPlano = async (userEmail: string, ctx: SceneContextMessageUpdate) => {
     const response = await getMonetizzeProductTransaction({email: userEmail})
-    if (response.dados[0].plano.nome.includes(CacheService.getPlano())) {
+    if (response.dados[0].plano.nome.includes(ctx.scene.session.state['plano'])) {
         return true;
     } else {
         return false;

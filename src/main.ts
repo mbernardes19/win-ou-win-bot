@@ -9,7 +9,7 @@ import path from 'path';
 dotEnv.config({path: path.join(__dirname, '..', '.env')});
 import { startChatLinkValidation } from './services/chatInviteLink';
 import { connection } from "./db";
-import { getChat } from './services/chatResolver';
+import { getChats } from './services/chatResolver';
 import { getChatInviteLink } from './services/chatInviteLink';
 import User from "./model/User";
 import { startCronJobs } from './services/cronjobs';
@@ -42,15 +42,10 @@ bot.command('canais', async ctx => {
         if (user.getUserData().statusAssinatura !== 'ativa') {
             return await ctx.reply('Você já ativou sua assinatura Monetizze comigo, porém seu status de assinatura na Monetizze não está como ativo, regularize sua situação com a Monetizze para ter acesso aos canais.');
         }
-        const { plano, dataAssinatura } = user.getUserData()
-        const linkCanalWin30 = getChatInviteLink(process.env.ID_CANAL_WIN_30);
-        const linkCanalWinVip = getChatInviteLink(process.env.ID_CANAL_WIN_VIP);
-        const linkCanalWinMix = getChatInviteLink(process.env.ID_CANAL_WIN_MIX);
-        const teclado = Markup.inlineKeyboard([
-            Markup.urlButton('Canal WIN 30', linkCanalWin30),
-            Markup.urlButton('Canal WIN VIP', linkCanalWinVip),
-            Markup.urlButton('Canal WIN MIX', linkCanalWinMix),
-        ]);
+        const { plano } = user.getUserData()
+        const chats = getChats(plano);
+        const invites = chats.map(chat => getChatInviteLink(chat))
+        const teclado = Markup.inlineKeyboard(invites.map(invite => Markup.urlButton(invite.name, invite.invite)));
         await ctx.reply('É pra já!', Extra.markup(teclado))
         await updateViewChats(ctx.chat.id, connection);
     } catch (err) {
@@ -60,7 +55,6 @@ bot.command('canais', async ctx => {
 });
 
 bot.command('t35t3', async (ctx) => {
-    // 1099938207 (1)
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
