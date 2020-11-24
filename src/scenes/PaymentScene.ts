@@ -4,6 +4,7 @@ import { cartao, boleto } from '../services/validate';
 import { SceneContextMessageUpdate } from 'telegraf/typings/stage';
 
 const paymentScene = new BaseScene('payment')
+console.log('PLANO FEATURE', process.env.SELECT_PLANO_FEATURE)
 const NEXT_SCENE = process.env.SELECT_PLANO_FEATURE === 'true' ? 'plano' : 'name'
 
 paymentScene.command('reiniciar', ctx => {
