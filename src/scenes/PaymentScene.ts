@@ -2,6 +2,8 @@ import { BaseScene, Markup, Extra } from 'telegraf';
 import { log } from '../logger';
 import { cartao, boleto } from '../services/validate';
 import { SceneContextMessageUpdate } from 'telegraf/typings/stage';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const paymentScene = new BaseScene('payment')
 console.log('PLANO FEATURE', process.env.SELECT_PLANO_FEATURE)
