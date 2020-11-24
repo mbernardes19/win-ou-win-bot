@@ -30,12 +30,13 @@ const startChatLinkValidation = () => {
 
 const getChatInviteLink = (chatId: number|string) => {
     log(`Pegando link para chat ${chatId}`)
+    console.log(chatId, ID_CANAL_WIN_30)
     switch(chatId) {
-        case ID_CANAL_WIN_30:
+        case parseInt(ID_CANAL_WIN_30):
             return {name: 'WIN 30', invite: linkCanalWin30};
-        case ID_CANAL_WIN_VIP:
+        case parseInt(ID_CANAL_WIN_VIP):
             return {name: 'WIN VIP', invite: linkCanalWinVip};
-        case ID_CANAL_WIN_MIX:
+        case parseInt(ID_CANAL_WIN_MIX):
             return {name: 'WIN MIX', invite: linkCanalWinMix};
         default:
             throw new Error(`Chat buscado não existe ${chatId}`)

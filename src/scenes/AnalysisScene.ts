@@ -151,7 +151,7 @@ const enviarCanaisDeTelegram = async (ctx: SceneContextMessageUpdate, plano: str
     let chatInvites;
     log(`Enviando canais de Telegram para usuário ${ctx.chat.id}`)
     try {
-        links = getChats(ctx.scene.session.state['email'])
+        links = getChats(ctx.scene.session.state['plano'])
         chatInvites = links.map(link => getChatInviteLink(link))
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DE TELEGRAM`, err)
