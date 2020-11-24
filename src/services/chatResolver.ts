@@ -14,7 +14,7 @@ export function getChats(plano: string): number[] {
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_30))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_MIX))
                 break;
-            case Planos.MASTER:
+            case Planos.VIP:
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_30))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_MIX))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_VIP))
@@ -32,7 +32,7 @@ export function getChats(plano: string): number[] {
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_30))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_MIX))
                 break;
-            case Planos.MASTER:
+            case Planos.VIP:
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_30))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_MIX))
                 chatsInfo.push(parseInt(process.env.ID_CANAL_WIN_VIP))

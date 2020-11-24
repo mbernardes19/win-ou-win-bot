@@ -40,9 +40,9 @@ planoScene.action(Planos.PREMIUM, async (ctx) => {
     await ctx.scene.enter('name', ctx.scene.state);
 })
 
-planoScene.action(Planos.MASTER, async (ctx) => {
+planoScene.action(Planos.VIP, async (ctx) => {
     await ctx.answerCbQuery();
-    await savePlano(Planos.MASTER, ctx);
+    await savePlano(Planos.VIP, ctx);
     await ctx.scene.enter('name', ctx.scene.state);
 })
 
@@ -65,7 +65,7 @@ planoScene.use(async (ctx) => {
         if (!ctx.message) {
             await ctx.answerCbQuery()
         }
-        await savePlano(Planos.MASTER, ctx);
+        await savePlano(Planos.VIP, ctx);
         return await ctx.scene.enter('name', ctx.scene.state);
     }
     await ctx.reply('Por favor, escolha uma das opções acima');

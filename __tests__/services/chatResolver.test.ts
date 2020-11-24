@@ -22,8 +22,8 @@ describe('Chat Resolver', () => {
         expect(chats.length).toBe(2);
     })
 
-    it('Should return chats for plano WIN MASTER', () => {
-        const chats = getChats(Planos.MASTER)
+    it('Should return chats for plano WIN VIP', () => {
+        const chats = getChats(Planos.VIP)
         expect(chats[0]).toBe(-100123)
         expect(chats[1]).toBe(-1001234)
         expect(chats[2]).toBe(-10012345)

@@ -19,7 +19,7 @@ const cartao = (ctx) => ctx.message ? CARTAO.test(ctx.message.text) : CARTAO.tes
 const boleto = (ctx) => ctx.message ? BOLETO.test(ctx.message.text) : BOLETO.test(ctx.update.message.text);
 const start = (ctx) => ctx.message ? PLANO.START.test(ctx.message.text) : PLANO.START.test(ctx.update.message.text);
 const premium = (ctx) => ctx.message ? PLANO.PREMIUM.test(ctx.message.text) : PLANO.PREMIUM.test(ctx.update.message.text);
-const master = (ctx) => ctx.message ? PLANO.MASTER.test(ctx.message.text) : PLANO.MASTER.test(ctx.update.message.text);
+const master = (ctx) => ctx.message ? PLANO.VIP.test(ctx.message.text) : PLANO.VIP.test(ctx.update.message.text);
 const confirmado = (ctx) => ctx.message ? SIM.test(ctx.message.text) : SIM.test(ctx.update.message.text);
 const negado = (ctx) => ctx.message ? NAO.test(ctx.message.text) : NAO.test(ctx.update.message.text);
 

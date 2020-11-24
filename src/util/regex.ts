@@ -3,7 +3,7 @@ const BOLETO = /bolet[a|o]/i
 const PLANO = {
     START: /^start$/i,
     PREMIUM: /^premium$/i,
-    MASTER: /^master$/i,
+    VIP: /^vip$/i,
 }
 const SIM = /^(sim|s)$/i
 const NAO = /^(n[a|ã]o|n)$/i

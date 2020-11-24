@@ -73,7 +73,7 @@ const showPlanoOptions = async (ctx) => {
         const planos = Markup.inlineKeyboard([
             [Markup.callbackButton('START', 'START')],
             [Markup.callbackButton('PREMIUM', 'PREMIUM')],
-            [Markup.callbackButton('MASTER', 'MASTER')],
+            [Markup.callbackButton('VIP', 'VIP')],
         ])
         await ctx.reply("Qual foi o plano que você contratou?", Extra.markup(planos))
     }

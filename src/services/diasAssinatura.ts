@@ -26,7 +26,7 @@ const pegarDiasSobrandoDeAssinatura = async (plano: string, email: string) => {
         case Planos.PREMIUM:
             diasDeAssinatura = 90;
             break;
-        case Planos.MASTER:
+        case Planos.VIP:
             diasDeAssinatura = 365;
             break;
     }
