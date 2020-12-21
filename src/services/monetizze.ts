@@ -40,7 +40,7 @@ const getDataAssinaturaFromUser = async (userEmail: string) => {
     log(`Pegando data de assinatura de usuário ${userEmail}`)
     try {
         const transaction = await getMonetizzeProductTransaction({ email: userEmail })
-        log(`Pegando data de assinatura do usuário na Monetizze`);
+        log(`Pegando data de assinatura do usuário na Eduzz`);
         const transactionsLength = transaction.dados.length;
         return transaction.dados[transactionsLength-1].venda.dataInicio;
     } catch (err) {
@@ -51,7 +51,7 @@ const getDataAssinaturaFromUser = async (userEmail: string) => {
 
 const verifyUserPurchase = async (email) => {
     try {
-        log(`Verificando compra de usuário na Monetizze ${email}`)
+        log(`Verificando compra de usuário na Eduzz ${email}`)
         const responseFinalizada = await getMonetizzeProductTransaction({ email, "status[]": 2 })
         log(responseFinalizada)
         if (responseFinalizada.recordCount === "0") {
@@ -82,7 +82,7 @@ const verifyUserPurchase = async (email) => {
 
 const checkIfPaymentMethodIsBoleto = async (email) => {
     try {
-        log(`Verificando se a compra na Monetizze de ${email} foi feita por boleto e está aguardando pagamento`)
+        log(`Verificando se a compra na Eduzz de ${email} foi feita por boleto e está aguardando pagamento`)
         const response = await getMonetizzeProductTransaction({ email, "forma_pagamento[]": 3, "status[]": 1 })
         return response.recordCount === "0" ? false : true;
     } catch (err) {
