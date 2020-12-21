@@ -15,6 +15,8 @@ import User from "./model/User";
 import { startCronJobs } from './services/cronjobs';
 import { getMonetizzeProductTransaction } from './services/request'
 import ngrok from 'ngrok';
+import EduzzService from "./services/eduzz";
+import { EduzzAuthCredentials } from "./interfaces/Eduzz";
 
     const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
     const bot = new Telegraf(botToken);
@@ -30,17 +32,25 @@ bot.command('start', Stage.enter('welcome'))
 bot.command('reiniciar', Stage.enter('welcome'))
 bot.command('canais', async ctx => {
     log(`Usuário ${ctx.chat.id} solicitou ver os canais disponíveis`);
+    // const eduzzService = new EduzzService();
+    // const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
+    // await eduzzService.authenticate(authCredentials)
+    // const res = await eduzzService.getPurchases({})
+    // console.log(res.data[0])
+    // console.log(res.data[1])
+    // console.log(res.data[2])
+    // console.log(res.data[3])
     try {
         const dbUserResult = await getUserByTelegramId(ctx.chat.id, connection);
         if (!dbUserResult) {
-            return await ctx.reply('Você ainda não ativou sua assinatura Monetizze comigo.');
+            return await ctx.reply('Você ainda não ativou sua assinatura Eduzz comigo.');
         }
         if (dbUserResult.ver_canais >= 2) {
             return await ctx.reply('Você já visualizou os canais 2 vezes!');
         }
         const user = User.fromDatabaseResult(dbUserResult);
         if (user.getUserData().statusAssinatura !== 'ativa') {
-            return await ctx.reply('Você já ativou sua assinatura Monetizze comigo, porém seu status de assinatura na Monetizze não está como ativo, regularize sua situação com a Monetizze para ter acesso aos canais.');
+            return await ctx.reply('Você já ativou sua assinatura Eduzz comigo, porém seu status de assinatura na Eduzz não está como ativo, regularize sua situação com a Eduzz para ter acesso aos canais.');
         }
         const { plano } = user.getUserData()
         const chats = getChats(plano);
@@ -50,11 +60,13 @@ bot.command('canais', async ctx => {
         await updateViewChats(ctx.chat.id, connection);
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DISPONÍVEIS POR COMANDO PARA USUÁRIO ${ctx.chat.id}`, err)
-        await ctx.reply('Ocorreu um erro ao verificar sua assinatura Monetizze. Tente novamente mais tarde.')
+        await ctx.reply('Ocorreu um erro ao verificar sua assinatura Eduzz. Tente novamente mais tarde.')
     }
 });
 
 bot.command('t35t3', async (ctx) => {
+    const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
+    res.dados.map(r => console.log(r))
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
