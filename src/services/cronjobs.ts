@@ -1,5 +1,5 @@
 import Cron from 'node-cron';
-import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura } from '../dao';
+import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura, getAllValidMonetizzeUsers } from '../dao';
 import { connection } from '../db';
 import CacheService from './cache';
 import { Telegram } from 'telegraf';
@@ -60,7 +60,7 @@ const updateValidUsersStatusAssinatura = () => {
 
         let allUsers = [];
         try {
-            allUsers = await getAllValidUsers(connection);
+            allUsers = await getAllValidMonetizzeUsers(connection);
             let start = 0
             let theresold = 10
             const intervalId = setInterval(async () => {
