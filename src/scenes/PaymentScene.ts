@@ -84,7 +84,7 @@ const showPlanoOptions = async (ctx) => {
 
 const askForPlano = async (ctx) => {
     await ctx.reply('Certo!');
-    await ctx.reply('Vou precisar de mais alguns dados pra confirmar o pagamento no servidor da Eduzz, tudo bem?');
+    await ctx.reply('Vou precisar de mais alguns dados pra confirmar o pagamento no servidor da Monetizze, tudo bem?');
     await showPlanoOptions(ctx);
 }
 
