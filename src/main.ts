@@ -3,7 +3,7 @@ import { Telegraf, Stage, session, Extra, Markup } from 'telegraf';
 import MainStage from './stages/MainStage';
 import dotEnv from 'dotenv';
 import { log, logError } from './logger';
-import {getUserByTelegramId, updateViewChats, getAllUsers} from './dao';
+import {getUserByTelegramId, updateViewChats} from './dao';
 import CacheService from "./services/cache";
 import path from 'path';
 dotEnv.config({path: path.join(__dirname, '..', '.env')});
@@ -53,25 +53,11 @@ bot.command('canais', async ctx => {
             return await ctx.reply('Você já ativou sua assinatura Eduzz comigo, porém seu status de assinatura na Eduzz não está como ativo, regularize sua situação com a Eduzz para ter acesso aos canais.');
         }
         const { plano } = user.getUserData()
-        if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
-            const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))
-            const winMix = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_MIX))
-            const winVip = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_VIP))
-
-            const teclado = Markup.inlineKeyboard([
-                [{text: win30.name, url: win30.invite}],
-                [{text: winMix.name, url: winMix.invite}],
-                [{text: winVip.name, url: winVip.invite}]
-            ]);
-            await ctx.reply('É pra já!', Extra.markup(teclado))
-            await updateViewChats(ctx.chat.id, connection);   
-        } else {
-            const chats = getChats(plano);
-            const invites = chats.map(chat => getChatInviteLink(chat))
-            const teclado = Markup.inlineKeyboard(invites.map(invite => Markup.urlButton(invite.name, invite.invite)));
-            await ctx.reply('É pra já!', Extra.markup(teclado))
-            await updateViewChats(ctx.chat.id, connection);   
-        }
+        const chats = getChats(plano);
+        const invites = chats.map(chat => getChatInviteLink(chat))
+        const teclado = Markup.inlineKeyboard(invites.map(invite => Markup.urlButton(invite.name, invite.invite)));
+        await ctx.reply('É pra já!', Extra.markup(teclado))
+        await updateViewChats(ctx.chat.id, connection);
     } catch (err) {
         logError(`ERRO AO ENVIAR CANAIS DISPONÍVEIS POR COMANDO PARA USUÁRIO ${ctx.chat.id}`, err)
         await ctx.reply('Ocorreu um erro ao verificar sua assinatura Eduzz. Tente novamente mais tarde.')
@@ -79,51 +65,12 @@ bot.command('canais', async ctx => {
 });
 
 bot.command('t35t3', async (ctx) => {
-    // const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
-    // res.dados.map(r => console.log(r))
+    const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
+    res.dados.map(r => console.log(r))
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
     // await bot.telegram.sendMessage(721557882, 'Contato do suporte ⤵️', Extra.markup(teclado))
-    const users = await getAllUsers(connection);
-    const asyncActions = [];
-    const message = `Boa noite! Ocorreu um bug nos canais do Win ou Win e muitas pessoas acabaram sendo removidas dos canais por engano. Para garantir que você não perca o acesso aos nossos canais, estou te enviando novamente o acesso a eles:`
-    const message2 = `Caso não consiga acessar através desses botões, utilize o comando /canais para recebê-los novamente.`
-    await bot.telegram.sendMessage(721557882, message2)
-    users.forEach(user => {
-        if (user.plano === '' || user.plano === 'undefined') {
-            const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))
-            const winMix = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_MIX))
-            const winVip = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_VIP))
-            asyncActions.push(bot.telegram.sendMessage(user.id_telegram, message, {
-                reply_markup: {
-                    inline_keyboard: [
-                        [{text: win30.name, url: win30.invite}],
-                        [{text: winMix.name, url: winMix.invite}],
-                        [{text: winVip.name, url: winVip.invite}],
-                    ]
-                }
-            }))
-            asyncActions.push(bot.telegram.sendMessage(user.id_telegram, message2))
-        } else {
-            const chats = getChats(user.plano)
-            const invites = chats.map(chat => getChatInviteLink(chat))
-            asyncActions.push(bot.telegram.sendMessage(user.id_telegram, message, {
-                reply_markup: {
-                    inline_keyboard: [
-                        invites.map(invite => ({text: invite.name, url: invite.invite}))
-                    ]
-                }
-            }))
-            asyncActions.push(bot.telegram.sendMessage(user.id_telegram, message2))
-        }
-    })
-    try {
-        const res = await Promise.allSettled(asyncActions)
-        res.forEach(re => console.log(re))
-    } catch (err) {
-        console.log('ERRO', err)
-    }
 });
 
 bot.command('suporte', async (ctx) => {
@@ -159,3 +106,4 @@ app.get('/', (req: Request, res: Response) => {
 const PORT = process.env.PORT_TRADER_INFALIVEL_BOT_DIST_MAIN || process.env.PORT_MAIN || 3000
 console.log('PORTA', PORT)
 app.listen(PORT, () => log('conectado na porta 3000'))
+

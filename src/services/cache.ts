@@ -80,7 +80,7 @@ export default class CacheService {
     }
 
     static saveTelegramId(telegramId: string) {
-        this.user.telegramId = telegramId;
+        this.user.telegramId = name;
     }
 
     static getTelegramId() {
