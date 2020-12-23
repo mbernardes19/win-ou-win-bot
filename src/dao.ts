@@ -22,7 +22,7 @@ const addUserToDatabase = async (user: User, connection: Connection) => {
     const { telegramId, username, fullName, plano, discountCouponId, phone, email, paymentMethod, dataAssinatura, diasAteFimDaAssinatura } = userData;
     const query = util.promisify(connection.query).bind(connection)
     try {
-        await query(`insert into Users (id_telegram, user_telegram, plano, cupom_desconto, nome_completo, telefone, email, forma_de_pagamento, data_assinatura, status_assinatura, dias_ate_fim_assinatura, plataforma) values ('${telegramId}', '${username}', '${plano}', '${discountCouponId}', '${fullName}', '${phone}', '${email}', '${paymentMethod}', '${dataAssinatura}', 'ativa', '${diasAteFimDaAssinatura}', 'eduzz')`)
+        await query(`insert into Users (id_telegram, user_telegram, plano, cupom_desconto, nome_completo, telefone, email, forma_de_pagamento, data_assinatura, status_assinatura, dias_ate_fim_assinatura) values ('${telegramId}', '${username}', '${plano}', '${discountCouponId}', '${fullName}', '${phone}', '${email}', '${paymentMethod}', '${dataAssinatura}', 'ativa', '${diasAteFimDaAssinatura}')`)
     } catch (err) {
         throw err
     }
@@ -43,18 +43,6 @@ const getAllValidUsers = async (connection: Connection): Promise<User[]> => {
     const query = util.promisify(connection.query).bind(connection)
     try {
         const dbResults = await query(`select * from Users where status_assinatura = 'ativa' and kickado = 'N'`);
-        const users: User[] = dbResults.map(dbResult => User.fromDatabaseResult(dbResult))
-        return users;
-    } catch (err) {
-        logError(`ERRO AO PEGAR TODOS OS USUÁRIOS VÁLIDOS DO BANCO DE DADOS`, err);
-        throw err;
-    }
-}
-
-const getAllValidMonetizzeUsers = async (connection: Connection): Promise<User[]> => {
-    const query = util.promisify(connection.query).bind(connection)
-    try {
-        const dbResults = await query(`select * from Users where status_assinatura = 'ativa' and kickado = 'N' and plataforma = 'monetizze'`);
         const users: User[] = dbResults.map(dbResult => User.fromDatabaseResult(dbResult))
         return users;
     } catch (err) {
@@ -108,13 +96,13 @@ const getAllInvalidUsers = async (connection: Connection) => {
 
 const updateUsersStatusAssinatura = async (users: User[], connection: Connection) => {
     log(`Iniciando atualização de status de usuários ${users}`)
-    // const eduzzService = new EduzzService();
-    // const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
-    // await eduzzService.authenticate(authCredentials);
+    const eduzzService = new EduzzService();
+    const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
+    await eduzzService.authenticate(authCredentials);
     const query = util.promisify(connection.query).bind(connection);
     let newStatusAssinatura;
     try {
-        newStatusAssinatura = await getUsersNewStatusAssinatura(users);
+        newStatusAssinatura = await eduzzService.getUsersNewStatusAssinatura(users);
     } catch (err) {
         throw err;
     }
@@ -185,4 +173,4 @@ const updateViewChats = async (telegramId: string|number, connection: Connection
     }
 }
 
-export { addUserToDatabase, clearUsersTable, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllValidMonetizzeUsers, getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }
+export { addUserToDatabase, clearUsersTable, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }
