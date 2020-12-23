@@ -1,6 +1,6 @@
 import { BaseScene, Markup, Extra, Telegram } from 'telegraf';
 import CacheService from '../services/cache';
-// import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser, confirmPlano } from '../services/monetizze';
+import { verifyUserPurchase, checkIfPaymentMethodIsBoleto, getDataAssinaturaFromUser, confirmPlano } from '../services/monetizze';
 import UserData from '../model/UserData';
 import User from '../model/User';
 import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
@@ -9,11 +9,8 @@ import { connection } from '../db';
 import { getChats } from '../services/chatResolver';
 import { getChatInviteLink } from '../services/chatInviteLink';
 import { SceneContextMessageUpdate, Scene } from 'telegraf/typings/stage';
-import EduzzService from '../services/eduzz';
-import { EduzzAuthCredentials } from '../interfaces/Eduzz';
 
 const analysisScene = new BaseScene('analysis')
-const eduzzService = new EduzzService();
 
 analysisScene.command('reiniciar', ctx => {
     log(`Reiniciando bot por ${ctx.chat.id}`)
@@ -38,14 +35,12 @@ analysisScene.command('suporte', async ctx => {
 })
 
 analysisScene.enter(async (ctx) => {
-    const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
-    await eduzzService.authenticate(authCredentials)
     await ctx.reply('Verificando sua compra nos servidores da Monetizze...');
     const email = ctx.scene.session.state['email'];
     let isPurchaseApproved;
     try {
         log(`Iniciando análise de compra ${ctx.chat.id}`)
-        isPurchaseApproved = await eduzzService.verifyUserPurchase(email);
+        isPurchaseApproved = await verifyUserPurchase(email);
         if (isPurchaseApproved) {
             log(`Compra confirmada! ${ctx.chat.id}`)
         }
@@ -57,7 +52,7 @@ analysisScene.enter(async (ctx) => {
     }
 
     if (isPurchaseApproved) {
-        const isPlanoConfirmed = await eduzzService.confirmProduct(email, ctx.scene.session.state['plano'])
+        const isPlanoConfirmed = await confirmPlano(email, ctx)
         if (isPlanoConfirmed) {
             log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
             try {
@@ -84,7 +79,7 @@ analysisScene.enter(async (ctx) => {
     } else {
         let isPaymentBoleto;
         try {
-            isPaymentBoleto = await eduzzService.checkIfPaymentMethodIsBoleto(email);
+            isPaymentBoleto = await checkIfPaymentMethodIsBoleto(email);
         } catch (err) {
             logError(`ERRO AO VERIFICAR SE PAGAMENTO FOI FEITO NO BOLETO E ESTÁ AGUARDANDO PAGAMENTO`, err)
             await enviarMensagemDeErroAoAdmin(`ERRO AO VERIFICAR SE PAGAMENTO FOI FEITO NO BOLETO E ESTÁ AGUARDANDO PAGAMENTO`, err);
@@ -104,7 +99,7 @@ analysisScene.enter(async (ctx) => {
 const getUserDataAssinatura = async (ctx: SceneContextMessageUpdate) => {
     const email = ctx.scene.session.state['email'];
     try {
-        return await eduzzService.getUserSubscriptionDate(email);
+        return await getDataAssinaturaFromUser(email);
     } catch (err) {
         throw err;
     }
