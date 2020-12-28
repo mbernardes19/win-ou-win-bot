@@ -9,8 +9,8 @@ import { sendReportToEmail } from './email';
 
 const startCronJobs = () => {
     try {
-        removeInvalidUsers();
-        updateValidUsersStatusAssinatura();
+        // removeInvalidUsers();
+        // updateValidUsersStatusAssinatura();
         sendCsvReportToEmail();
     } catch (err) {
         logError(`ERRO AO EXECUTAR CRONJOB`, err)
