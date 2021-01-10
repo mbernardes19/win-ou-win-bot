@@ -4,6 +4,8 @@ import User from './model/User';
 import { getUsersNewStatusAssinatura } from './services/monetizze';
 import { log, logError } from './logger';
 import { pegarDiasSobrandoDeAssinatura } from './services/diasAssinatura';
+import EduzzService from './services/eduzz';
+import { EduzzAuthCredentials } from './interfaces/Eduzz';
 
 const clearUsersTable = async (connection: Connection) => {
     const query = util.promisify(connection.query).bind(connection)
@@ -94,10 +96,13 @@ const getAllInvalidUsers = async (connection: Connection) => {
 
 const updateUsersStatusAssinatura = async (users: User[], connection: Connection) => {
     log(`Iniciando atualização de status de usuários ${users}`)
+    const eduzzService = new EduzzService();
+    const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
+    await eduzzService.authenticate(authCredentials);
     const query = util.promisify(connection.query).bind(connection);
     let newStatusAssinatura;
     try {
-        newStatusAssinatura = await getUsersNewStatusAssinatura(users);
+        newStatusAssinatura = await eduzzService.getUsersNewStatusAssinatura(users);
     } catch (err) {
         throw err;
     }
