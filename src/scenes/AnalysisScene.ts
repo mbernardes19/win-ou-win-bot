@@ -40,7 +40,7 @@ analysisScene.command('suporte', async ctx => {
 analysisScene.enter(async (ctx) => {
     const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
     await eduzzService.authenticate(authCredentials)
-    await ctx.reply('Verificando sua compra nos servidores da Monetizze...');
+    await ctx.reply('Verificando sua compra nos servidores da Eduzz...');
     const email = ctx.scene.session.state['email'];
     let isPurchaseApproved;
     try {
@@ -50,9 +50,9 @@ analysisScene.enter(async (ctx) => {
             log(`Compra confirmada! ${ctx.chat.id}`)
         }
     } catch (err) {
-        logError(`Erro ao verificar compra de usuário na Monetizze`, err)
-        await enviarMensagemDeErroAoAdmin(`Erro ao verificar compra de usuário na Monetizze`, err);
-        await ctx.reply('Me desculpe... Ocorreu um erro ao verificar a sua compra na Monetizze. Por favor, tente iniciar uma conversa comigo novamente.');
+        logError(`Erro ao verificar compra de usuário na Eduzz`, err)
+        await enviarMensagemDeErroAoAdmin(`Erro ao verificar compra de usuário na Eduzz`, err);
+        await ctx.reply('Me desculpe... Ocorreu um erro ao verificar a sua compra na Eduzz. Por favor, tente iniciar uma conversa comigo novamente.');
         return await endConversation(ctx);
     }
 
@@ -70,15 +70,15 @@ analysisScene.enter(async (ctx) => {
                 if (err.errno === 1062) {
                     logError(`Usuário já existe no banco de dados`, err);
                     await enviarMensagemDeErroAoAdmin(`Usuário já existe no banco de dados`, err);
-                    await ctx.reply(`Você já ativou sua assinatura Monetizze comigo antes.`)
+                    await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
                     return await endConversation(ctx);
                 } else {
-                    await ctx.reply(`Sua compra na Monetizze foi confirmada, porém ocorreu um erro ao ativar sua assinatura na Monetizze.`)
+                    await ctx.reply(`Sua compra na Eduzz foi confirmada, porém ocorreu um erro ao ativar sua assinatura na Eduzz.`)
                     return await endConversation(ctx);
                 }
             }
         } else {
-            await ctx.reply(`Sua compra na Monetizze foi confirmada, porém o plano que você selecionou não é o mesmo que consta nela.\nPor favor, inicie uma conversa comigo novamente com o comando /start e infome o plano correto.`)
+            await ctx.reply(`Sua compra na Eduzz foi confirmada, porém o plano que você selecionou não é o mesmo que consta nela.\nPor favor, inicie uma conversa comigo novamente com o comando /start e infome o plano correto.`)
             return await endConversation(ctx);
         }
     } else {
@@ -92,11 +92,11 @@ analysisScene.enter(async (ctx) => {
         }
         if (isPaymentBoleto) {
             log(`Pagamento de ${ctx.chat.id} foi em boleto e está aguardando pagamento`)
-            await ctx.reply('Sua compra foi iniciada, porém o seu boleto ainda não foi pago/compensado. Você pode ver o status do seu boleto acessando monetizze.com.br . Quando estiver compensado volte e inicie uma conversa comigo novamente!')
+            await ctx.reply('Sua compra foi iniciada, porém o seu boleto ainda não foi pago/compensado. Você pode ver o status do seu boleto acessando eduzz.com.br . Quando estiver compensado volte e inicie uma conversa comigo novamente!')
             return await endConversation(ctx);
         }
         log(`Nenhuma compra feita pelo usuário ${ctx.chat.id} foi encontrada`)
-        await ctx.reply('Nenhuma compra confirmada do seu usuário foi encontrada na Monetizze ou sua assinatura não está com status ativo.\n\nSe você realmente comprou, entre em contato com o suporte usando o comando /suporte')
+        await ctx.reply('Nenhuma compra confirmada do seu usuário foi encontrada na Eduzz ou sua assinatura não está com status ativo.\n\nSe você realmente comprou, entre em contato com o suporte usando o comando /suporte')
         return await endConversation(ctx);
     }
 })
