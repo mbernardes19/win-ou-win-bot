@@ -63,6 +63,18 @@ const getAllValidMonetizzeUsers = async (connection: Connection): Promise<User[]
     }
 }
 
+const getAllValidEduzzUsers = async (connection: Connection): Promise<User[]> => {
+    const query = util.promisify(connection.query).bind(connection)
+    try {
+        const dbResults = await query(`select * from Users where status_assinatura = 'ativa' and kickado = 'N' and plataforma = 'eduzz'`);
+        const users: User[] = dbResults.map(dbResult => User.fromDatabaseResult(dbResult))
+        return users;
+    } catch (err) {
+        logError(`ERRO AO PEGAR TODOS OS USUÁRIOS VÁLIDOS DO BANCO DE DADOS`, err);
+        throw err;
+    }
+}
+
 const getAllValidUsersWithPaymentBoleto = async (connection: Connection): Promise<User[]> => {
     const query = util.promisify(connection.query).bind(connection)
     try {
@@ -107,10 +119,7 @@ const getAllInvalidUsers = async (connection: Connection) => {
 }
 
 const updateUsersStatusAssinatura = async (users: User[], connection: Connection) => {
-    log(`Iniciando atualização de status de usuários ${users}`)
-    // const eduzzService = new EduzzService();
-    // const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
-    // await eduzzService.authenticate(authCredentials);
+    log(`Iniciando atualização de status de usuários Monetizze ${users}`)
     const query = util.promisify(connection.query).bind(connection);
     let newStatusAssinatura;
     try {
@@ -127,7 +136,33 @@ const updateUsersStatusAssinatura = async (users: User[], connection: Connection
         await Promise.all(updates);
         log(`Atualização de status realizada com sucesso!`)
     } catch (err) {
-        logError(`ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS ${users}`, err);
+        logError(`ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS MONETIZZE ${users}`, err);
+        throw err;
+    }
+}
+
+const updateUsersStatusAssinaturaEduzz = async (users: User[], connection: Connection) => {
+    log(`Iniciando atualização de status de usuários Eduzz ${users}`)
+    const eduzzService = new EduzzService();
+    const authCredentials: EduzzAuthCredentials = {email: 'contato.innovatemarketing@gmail.com', publicKey: '98057553', apiKey: '6d6f195185'}
+    await eduzzService.authenticate(authCredentials);
+    const query = util.promisify(connection.query).bind(connection);
+    let newStatusAssinatura;
+    try {
+        newStatusAssinatura = await eduzzService.getUsersNewStatusAssinatura(users);
+    } catch (err) {
+        throw err;
+    }
+
+    const updates = []
+    users.forEach((user, index) => {
+        updates.push(query(`update Users set status_assinatura='${newStatusAssinatura[index]}' where id_telegram='${user.getUserData().telegramId}'`));
+    })
+    try {
+        await Promise.all(updates);
+        log(`Atualização de status realizada com sucesso!`)
+    } catch (err) {
+        logError(`ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS EDUZZ ${users}`, err);
         throw err;
     }
 }
@@ -185,4 +220,4 @@ const updateViewChats = async (telegramId: string|number, connection: Connection
     }
 }
 
-export { addUserToDatabase, clearUsersTable, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllValidMonetizzeUsers, getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }
+export { addUserToDatabase, clearUsersTable, getAllValidUsersWithPaymentBoleto, getUserByTelegramId, getAllValidUsers, getAllValidMonetizzeUsers, getAllValidEduzzUsers , getAllUsers, getAllInvalidUsers, updateUsersStatusAssinatura, updateUsersStatusAssinaturaEduzz, updateUsersDiasAteFimAssinatura, markUserAsKicked, getAllInvalidNonKickedUsers, updateViewChats }

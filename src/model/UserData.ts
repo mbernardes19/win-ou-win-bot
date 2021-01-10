@@ -10,4 +10,5 @@ export default class UserData {
     dataAssinatura: string;
     statusAssinatura? :string
     diasAteFimDaAssinatura?: number;
+    platform: string;
 }

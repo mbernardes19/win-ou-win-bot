@@ -1,5 +1,5 @@
 import Cron from 'node-cron';
-import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura, getAllValidMonetizzeUsers } from '../dao';
+import { getAllInvalidNonKickedUsers, getAllUsers, markUserAsKicked, getAllValidUsers, updateUsersStatusAssinatura, getAllValidMonetizzeUsers, getAllValidEduzzUsers, updateUsersStatusAssinaturaEduzz } from '../dao';
 import { connection } from '../db';
 import CacheService from './cache';
 import { Telegram } from 'telegraf';
@@ -10,7 +10,8 @@ import { sendReportToEmail } from './email';
 const startCronJobs = () => {
     try {
         removeInvalidUsers();
-        updateValidUsersStatusAssinatura();
+        updateValidMonetizzeUsersStatusAssinatura();
+        updateValidEduzzUsersStatusAssinatura();
         sendCsvReportToEmail();
     } catch (err) {
         logError(`ERRO AO EXECUTAR CRONJOB`, err)
@@ -52,11 +53,11 @@ const removeInvalidUsers = () => {
     });
 }
 
-const updateValidUsersStatusAssinatura = () => {
+const updateValidMonetizzeUsersStatusAssinatura = () => {
     const eachHour = '0 */1 * * *';
 
     Cron.schedule(eachHour, async () => {
-        log(`⏱️ Iniciando cronjob para atualizar status de assinatura de usuários válidos`)
+        log(`⏱️ Iniciando cronjob para atualizar status de assinatura de usuários Monetizze válidos`)
 
         let allUsers = [];
         try {
@@ -66,7 +67,7 @@ const updateValidUsersStatusAssinatura = () => {
             const intervalId = setInterval(async () => {
                 await updateUsersStatusAssinatura(allUsers.slice(start, theresold), connection);
                 if (theresold >= allUsers.length) {
-                    log('Todos usuários atualizados com sucesso')
+                    log('Todos usuários Monetizze atualizados com sucesso')
                     clearInterval(intervalId)
                 } else {
                     start = theresold;
@@ -74,8 +75,37 @@ const updateValidUsersStatusAssinatura = () => {
                 }
             }, 10000)
         } catch (err) {
-            logError(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS VÁLIDOS ${allUsers}`, err)
-            enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS VÁLIDOS ${allUsers}`, err)
+            logError(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS MONETIZZE VÁLIDOS ${allUsers}`, err)
+            enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS MONETIZZE VÁLIDOS ${allUsers}`, err)
+            throw err;
+        }
+    });
+}
+
+const updateValidEduzzUsersStatusAssinatura = () => {
+    const eachHourAndAHalf = '30 */1 * * *';
+
+    Cron.schedule(eachHourAndAHalf, async () => {
+        log(`⏱️ Iniciando cronjob para atualizar status de assinatura de usuários Eduzz válidos`)
+
+        let allUsers = [];
+        try {
+            allUsers = await getAllValidEduzzUsers(connection);
+            let start = 0
+            let theresold = 10
+            const intervalId = setInterval(async () => {
+                await updateUsersStatusAssinaturaEduzz(allUsers.slice(start, theresold), connection);
+                if (theresold >= allUsers.length) {
+                    log('Todos usuários Eduzz atualizados com sucesso')
+                    clearInterval(intervalId)
+                } else {
+                    start = theresold;
+                    theresold += 10;
+                }
+            }, 10000)
+        } catch (err) {
+            logError(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS EDUZZ VÁLIDOS ${allUsers}`, err)
+            enviarMensagemDeErroAoAdmin(`⏱️ ERRO AO ATUALIZAR STATUS DE ASSINATURA DE USUÁRIOS EDUZZ VÁLIDOS ${allUsers}`, err)
             throw err;
         }
     });
