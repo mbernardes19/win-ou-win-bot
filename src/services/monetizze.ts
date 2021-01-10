@@ -99,7 +99,16 @@ const getUsersNewStatusAssinatura = async (users: User[]) => {
     })
     try {
         const usersToUpdate: MonetizzeTransactionResponse[] = await Promise.all(usersToUpdatePromise)
-        return usersToUpdate.map(user => user.dados[0].assinatura.status.toString().toLowerCase().replace(/' '/g, '_'))
+        return usersToUpdate.map(user => {
+            if (user.dados.length > 0) {
+                console.log(user.dados[0].comprador.email, user.dados[0].assinatura);
+            } else {
+                console.log(user.dados);
+            }
+            return user.dados[0] ?
+                user.dados[0].assinatura.status.toString().toLowerCase().replace(/' '/g, '_') :
+                'cancelada'
+        })
     } catch (err) {
         logError(`ERRO AO PEGAR NOVO STATUS DE ASSINATURA DE USUÁRIOS ${users}`, err);
         throw err;
