@@ -54,7 +54,7 @@ const getAllValidUsers = async (connection: Connection): Promise<User[]> => {
 const getAllValidMonetizzeUsers = async (connection: Connection): Promise<User[]> => {
     const query = util.promisify(connection.query).bind(connection)
     try {
-        const dbResults = await query(`select * from Users where status_assinatura = 'ativa' and kickado = 'N' and plataforma = 'monetizze'`);
+        const dbResults = await query(`select * from Users where kickado = 'N' and plataforma = 'monetizze'`);
         const users: User[] = dbResults.map(dbResult => User.fromDatabaseResult(dbResult))
         return users;
     } catch (err) {
@@ -66,7 +66,7 @@ const getAllValidMonetizzeUsers = async (connection: Connection): Promise<User[]
 const getAllValidEduzzUsers = async (connection: Connection): Promise<User[]> => {
     const query = util.promisify(connection.query).bind(connection)
     try {
-        const dbResults = await query(`select * from Users where status_assinatura = 'ativa' and kickado = 'N' and plataforma = 'eduzz'`);
+        const dbResults = await query(`select * from Users where kickado = 'N' and plataforma = 'eduzz'`);
         const users: User[] = dbResults.map(dbResult => User.fromDatabaseResult(dbResult))
         return users;
     } catch (err) {

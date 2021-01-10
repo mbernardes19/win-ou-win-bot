@@ -125,7 +125,7 @@ const getUserData = async (ctx: SceneContextMessageUpdate): Promise<UserData> =>
         userData.phone = ctx.scene.session.state['phone'];
         userData.email = ctx.scene.session.state['email'];
         userData.dataAssinatura = await getUserDataAssinatura(ctx);
-        userData.diasAteFimDaAssinatura = 0
+        userData.diasAteFimDaAssinatura = 0;
 
         log(`Username Telegram definido ${userData.username}`)
         log(`Id Telegram definido ${userData.telegramId}`)
