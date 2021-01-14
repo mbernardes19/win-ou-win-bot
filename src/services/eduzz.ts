@@ -54,7 +54,8 @@ export default class EduzzService extends CoursePlatformService<EduzzSaleOptions
 
     async confirmProduct(userEmail: string, plano?: string): Promise<boolean> {
         const salesResponse = await this.getPurchases({client_email: userEmail})
-        if (salesResponse.data[0].content_id === parseInt(plano)) {
+        console.log('CONFIRM PRODUCT', salesResponse.data[0].content_title, plano)
+        if (salesResponse.data[0].content_title.toLowerCase().includes(plano.toLowerCase())) {
             return true;
         } else {
             return false;

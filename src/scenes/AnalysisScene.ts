@@ -171,7 +171,7 @@ const enviarCanaisDeTelegram = async (ctx: SceneContextMessageUpdate, plano: str
 
     const teclado = Markup.inlineKeyboard(invites)
     await ctx.reply('Seja bem-vindo(a)!')
-    await ctx.reply('Clique agora nos três botões e acesse nossos canais o quanto antes, logo esses botões vão expirar ⤵️', Extra.markup(teclado))
+    await ctx.reply('Clique agora nos botões e acesse nossos canais o quanto antes, logo eles vão expirar ⤵️', Extra.markup(teclado))
     return await ctx.replyWithMarkdown('Caso eles já tenham expirado quando você clicar, utilize o comando /canais para recebê-los atualizados!\n\n*OBS.: Você só pode receber os canais por esse comando 2 vezes.*');
 }
 

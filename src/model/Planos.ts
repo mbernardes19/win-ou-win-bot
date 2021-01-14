@@ -1,11 +1,11 @@
 export enum Planos {
-    START = 'START',
-    PREMIUM = 'PREMIUM',
-    VIP = 'VIP',
+    START = 'WIN START',
+    PREMIUM = 'WIN PREMIUM',
+    VIP = 'WIN VIP',
 }
 
 export enum PlanosEduzz {
-    START = 'START',
-    PREMIUM = 'PREMIUM',
-    VIP = 'VIP',
+    START = 'WIN START',
+    PREMIUM = 'WIN PREMIUM',
+    VIP = 'WIN VIP',
 }
