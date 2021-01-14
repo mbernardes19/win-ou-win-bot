@@ -73,6 +73,7 @@ analysisScene.enter(async (ctx) => {
                     await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
                     return await endConversation(ctx);
                 } else {
+                    logError(`Erro genérico`, err)
                     await ctx.reply(`Sua compra na Eduzz foi confirmada, porém ocorreu um erro ao ativar sua assinatura na Eduzz.`)
                     return await endConversation(ctx);
                 }
