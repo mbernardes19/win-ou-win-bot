@@ -8,7 +8,7 @@ let linkCanalWin30 = ''
 let linkCanalWinVip = ''
 let linkCanalWinMix = ''
 
-const exportChatsInviteLink = async () => {
+export const exportChatsInviteLink = async () => {
     log(`🔗💬 GERANDO NOVOS LINKS PARA OS CHAT!`)
     try {
         const telegramClient = CacheService.get<Telegram>('telegramClient')
@@ -25,7 +25,7 @@ const exportChatsInviteLink = async () => {
 const startChatLinkValidation = () => {
     log(`VALIDAÇÃO DE LINKS INICIADA!`);
     exportChatsInviteLink();
-    setInterval(async () => await exportChatsInviteLink(), 300000)
+    setInterval(async () => await exportChatsInviteLink(), 600000)
 }
 
 const getChatInviteLink = (chatId: number|string) => {

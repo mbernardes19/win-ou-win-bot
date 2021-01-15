@@ -7,7 +7,7 @@ import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
 import { addUserToDatabase, getUserByTelegramId } from '../dao';
 import { connection } from '../db';
 import { getChats } from '../services/chatResolver';
-import { getChatInviteLink } from '../services/chatInviteLink';
+import { getChatInviteLink, exportChatsInviteLink } from '../services/chatInviteLink';
 import { SceneContextMessageUpdate, Scene } from 'telegraf/typings/stage';
 import EduzzService from '../services/eduzz';
 import { EduzzAuthCredentials } from '../interfaces/Eduzz';
@@ -74,6 +74,7 @@ analysisScene.enter(async (ctx) => {
                     const user = User.fromDatabaseResult(dbUserResult);
                     await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
                     if (user.getUserData().statusAssinatura === 'ativa') {
+                        await exportChatsInviteLink();
                         const { plano } = user.getUserData()
                         if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
                             const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))
