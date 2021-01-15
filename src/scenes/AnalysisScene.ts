@@ -4,7 +4,7 @@ import CacheService from '../services/cache';
 import UserData from '../model/UserData';
 import User from '../model/User';
 import { logError, log, enviarMensagemDeErroAoAdmin } from '../logger';
-import { addUserToDatabase } from '../dao';
+import { addUserToDatabase, getUserByTelegramId } from '../dao';
 import { connection } from '../db';
 import { getChats } from '../services/chatResolver';
 import { getChatInviteLink } from '../services/chatInviteLink';
@@ -60,8 +60,8 @@ analysisScene.enter(async (ctx) => {
         const isPlanoConfirmed = await eduzzService.confirmProduct(email, ctx.scene.session.state['plano'])
         if (isPlanoConfirmed) {
             log(`Compra e plano de ${ctx.chat.id} foram confirmados!`)
+            const userData = await getUserData(ctx);
             try {
-                const userData = await getUserData(ctx);
                 const newUser = new User(userData);
                 await saveUser(newUser);
                 await enviarCanaisDeTelegram(ctx, userData.plano, userData.dataAssinatura);
@@ -70,7 +70,35 @@ analysisScene.enter(async (ctx) => {
                 if (err.errno === 1062) {
                     logError(`Usuário já existe no banco de dados`, err);
                     await enviarMensagemDeErroAoAdmin(`Usuário já existe no banco de dados`, err);
+                    const dbUserResult = await getUserByTelegramId(userData.telegramId, connection)
+                    const user = User.fromDatabaseResult(dbUserResult);
                     await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
+                    if (user.getUserData().statusAssinatura === 'ativa') {
+                        const { plano } = user.getUserData()
+                        if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
+                            const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))
+                            const winMix = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_MIX))
+                            const winVip = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_VIP))
+                
+                            const teclado = Markup.inlineKeyboard([
+                                [{text: win30.name, url: win30.invite}],
+                                [{text: winMix.name, url: winMix.invite}],
+                                [{text: winVip.name, url: winVip.invite}]
+                            ]);
+                            await ctx.reply(
+                                `Caso não tenha conseguido acessar o canal, estou te enviando os botões de acesso novamente:`,
+                                Extra.markup(teclado)
+                            );
+                        } else {
+                            const chats = getChats(plano);
+                            const invites = chats.map(chat => getChatInviteLink(chat))
+                            const teclado = Markup.inlineKeyboard(invites.map(invite => Markup.urlButton(invite.name, invite.invite)));
+                            await ctx.reply(
+                                `Caso não tenha conseguido acessar o canal, estou te enviando os botões de acesso novamente:`,
+                                Extra.markup(teclado)
+                            );
+                        }
+                    }
                     return await endConversation(ctx);
                 } else {
                     logError(`Erro genérico`, err)
