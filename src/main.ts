@@ -1,5 +1,5 @@
 import App, { Request, Response, Express } from "express";
-import { Telegraf, Stage, session, Extra, Markup } from 'telegraf';
+import { Telegraf, Stage, session, Extra, Markup, Telegram } from 'telegraf';
 import MainStage from './stages/MainStage';
 import dotEnv from 'dotenv';
 import { log, logError } from './logger';
@@ -45,13 +45,17 @@ bot.command('canais', async ctx => {
         if (!dbUserResult) {
             return await ctx.reply('Você ainda não ativou sua assinatura Eduzz comigo.');
         }
-        if (dbUserResult.ver_canais >= 2) {
-            return await ctx.reply('Você já visualizou os canais 2 vezes!');
-        }
+        // if (dbUserResult.ver_canais >= 2) {
+        //     return await ctx.reply('Você já visualizou os canais 2 vezes!');
+        // }
         const user = User.fromDatabaseResult(dbUserResult);
         if (user.getUserData().statusAssinatura !== 'ativa') {
             return await ctx.reply('Você já ativou sua assinatura Eduzz comigo, porém seu status de assinatura na Eduzz não está como ativo, regularize sua situação com a Eduzz para ter acesso aos canais.');
         }
+        const telegramClient = CacheService.get<Telegram>('telegramClient');
+        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_30, parseInt(user.getUserData().telegramId));
+        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_VIP, parseInt(user.getUserData().telegramId));
+        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_MIX, parseInt(user.getUserData().telegramId));
         await exportChatsInviteLink();
         const { plano } = user.getUserData()
         if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
@@ -85,17 +89,23 @@ bot.command('tezte', async (ctx) => {
     await eduzzService.authenticate(authCredentials);
     // const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
     // res.dados.map(r => console.log(r))
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 796399114);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 796399114);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 796399114);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1396772493);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1396772493);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1396772493);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1397179083);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1397179083);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1397179083);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1416003988);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1416003988);
+    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1416003988);
     console.log('foi')
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
     // await bot.telegram.sendMessage(721557882, 'Contato do suporte ⤵️', Extra.markup(teclado))
 
-    const res = await eduzzService.getPurchases({email: 'fswinerd@hotmail.com'})
-    res.data.map(r => console.log(r.content_id, r.content_title))
+    // const res = await eduzzService.getPurchases({email: 'fswinerd@hotmail.com'})
+    // res.data.map(r => console.log(r.content_id, r.content_title))
 });
 
 bot.command('suporte', async (ctx) => {

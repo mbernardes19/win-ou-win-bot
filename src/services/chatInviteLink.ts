@@ -15,6 +15,9 @@ export const exportChatsInviteLink = async () => {
         linkCanalWin30 = await telegramClient.exportChatInviteLink(ID_CANAL_WIN_30)
         linkCanalWinVip = await telegramClient.exportChatInviteLink(ID_CANAL_WIN_VIP)
         linkCanalWinMix = await telegramClient.exportChatInviteLink(ID_CANAL_WIN_MIX)
+        console.log('WIN30', linkCanalWin30)
+        console.log('WINVIP', linkCanalWinVip)
+        console.log('WINMIX', linkCanalWinMix)
         log(`🔗💬 LINKS PARA CHATS GERADOS!`)
     } catch (err) {
         logError(`ERRO AO GERAR NOVOS LINKS PARA CHATS`, err)
@@ -30,7 +33,6 @@ const startChatLinkValidation = () => {
 
 const getChatInviteLink = (chatId: number|string) => {
     log(`Pegando link para chat ${chatId}`)
-    console.log(chatId, ID_CANAL_WIN_30)
     switch(chatId) {
         case parseInt(ID_CANAL_WIN_30):
             return {name: 'WIN 30', invite: linkCanalWin30};

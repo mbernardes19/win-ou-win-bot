@@ -74,6 +74,10 @@ analysisScene.enter(async (ctx) => {
                     const user = User.fromDatabaseResult(dbUserResult);
                     await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
                     if (user.getUserData().statusAssinatura === 'ativa') {
+                        const telegramClient = CacheService.get<Telegram>('telegramClient');
+                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_30, parseInt(user.getUserData().telegramId));
+                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_VIP, parseInt(user.getUserData().telegramId));
+                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_MIX, parseInt(user.getUserData().telegramId));
                         await exportChatsInviteLink();
                         const { plano } = user.getUserData()
                         if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
