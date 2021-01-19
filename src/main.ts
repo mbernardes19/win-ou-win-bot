@@ -53,10 +53,10 @@ bot.command('canais', async ctx => {
             return await ctx.reply('Você já ativou sua assinatura Eduzz comigo, porém seu status de assinatura na Eduzz não está como ativo, regularize sua situação com a Eduzz para ter acesso aos canais.');
         }
         const telegramClient = CacheService.get<Telegram>('telegramClient');
-        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_30, parseInt(user.getUserData().telegramId));
-        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_VIP, parseInt(user.getUserData().telegramId));
-        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_MIX, parseInt(user.getUserData().telegramId));
-        await exportChatsInviteLink();
+        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_30, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
+        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_VIP, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
+        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_MIX, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
+        // await exportChatsInviteLink();
         const { plano } = user.getUserData()
         if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
             const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))
@@ -89,15 +89,6 @@ bot.command('tezte', async (ctx) => {
     await eduzzService.authenticate(authCredentials);
     // const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
     // res.dados.map(r => console.log(r))
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1396772493);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1396772493);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1396772493);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1397179083);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1397179083);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1397179083);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_30, 1416003988);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_VIP, 1416003988);
-    await bot.telegram.unbanChatMember(process.env.ID_CANAL_WIN_MIX, 1416003988);
     console.log('foi')
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);

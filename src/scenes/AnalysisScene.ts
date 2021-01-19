@@ -75,10 +75,9 @@ analysisScene.enter(async (ctx) => {
                     await ctx.reply(`Você já ativou sua assinatura Eduzz comigo antes.`)
                     if (user.getUserData().statusAssinatura === 'ativa') {
                         const telegramClient = CacheService.get<Telegram>('telegramClient');
-                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_30, parseInt(user.getUserData().telegramId));
-                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_VIP, parseInt(user.getUserData().telegramId));
-                        await telegramClient.unbanChatMember(process.env.ID_CANAL_WIN_MIX, parseInt(user.getUserData().telegramId));
-                        await exportChatsInviteLink();
+                        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_30, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
+                        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_VIP, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
+                        await telegramClient.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_MIX, user_id: parseInt(user.getUserData().telegramId), only_if_banned: true})
                         const { plano } = user.getUserData()
                         if (plano === '' || plano === 'undefined' || plano === undefined || plano === null) {
                             const win30 = getChatInviteLink(parseInt(process.env.ID_CANAL_WIN_30))

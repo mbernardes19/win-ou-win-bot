@@ -28,7 +28,7 @@ export const exportChatsInviteLink = async () => {
 const startChatLinkValidation = () => {
     log(`VALIDAÇÃO DE LINKS INICIADA!`);
     exportChatsInviteLink();
-    setInterval(async () => await exportChatsInviteLink(), 600000)
+    // setInterval(async () => await exportChatsInviteLink(), 600000)
 }
 
 const getChatInviteLink = (chatId: number|string) => {
