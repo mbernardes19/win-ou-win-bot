@@ -129,7 +129,7 @@ analysisScene.enter(async (ctx) => {
             return await endConversation(ctx);
         }
         log(`Nenhuma compra feita pelo usuário ${ctx.chat.id} foi encontrada`)
-        await ctx.reply('Nenhuma compra confirmada do seu usuário foi encontrada na Eduzz ou sua assinatura não está com status ativo.\n\nSe você realmente comprou, entre em contato com o suporte usando o comando /suporte')
+        await ctx.reply('Nenhuma compra confirmada do seu usuário foi encontrada na Eduzz ou sua assinatura não está com status ativo.\n\nCaso isso seja um engano, entre em contato com o suporte usando o comando /suporte')
         return await endConversation(ctx);
     }
 })

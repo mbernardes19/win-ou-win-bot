@@ -63,7 +63,7 @@ const showPaymentOptions = async (ctx) => {
     log(`Enviando opções de PAGAMENTO para ${ctx.chat.id}`)
     const pagamento = Markup.inlineKeyboard([
         [Markup.callbackButton('💳 Cartão de Crédito', 'cartao_de_credito')],
-        [Markup.callbackButton('📄 Boleto', 'boleto')]
+        [Markup.callbackButton('📄 Boleto', 'boleto')],
     ])
     try {
         await ctx.reply("Qual foi sua forma de pagamento?", Extra.markup(pagamento))
