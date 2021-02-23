@@ -18,7 +18,7 @@ import ngrok from 'ngrok';
 import EduzzService from "./services/eduzz";
 import { EduzzAuthCredentials } from "./interfaces/Eduzz";
 
-    const botToken = process.env.NODE_ENV === 'production' ? process.env.BOT_TOKEN : process.env.TEST_BOT_TOKEN;
+    const botToken = process.env.BOT_TOKEN;
     const bot = new Telegraf(botToken);
 
 CacheService.save('telegramClient', bot.telegram);
@@ -89,14 +89,19 @@ bot.command('tezte', async (ctx) => {
     await eduzzService.authenticate(authCredentials);
     // const res = await getMonetizzeProductTransaction({email: 'feliperrocha@globo.com'})
     // res.dados.map(r => console.log(r))
-    console.log('foi')
+    
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_30, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_VIP, 1099938207);
     // bot.telegram.kickChatMember(process.env.ID_CANAL_WIN_MIX, 1099938207);
     // await bot.telegram.sendMessage(721557882, 'Contato do suporte ⤵️', Extra.markup(teclado))
 
-    // const res = await eduzzService.getPurchases({email: 'fswinerd@hotmail.com'})
-    // res.data.map(r => console.log(r.content_id, r.content_title))
+    await bot.telegram.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_30, user_id: parseInt('818552723'), only_if_banned: true})
+    await bot.telegram.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_VIP, user_id: parseInt('818552723'), only_if_banned: true})
+    await bot.telegram.callApi('unbanChatMember', {chat_id: process.env.ID_CANAL_WIN_MIX, user_id: parseInt('818552723'), only_if_banned: true})
+
+//    const res = await eduzzService.getPurchases({client_email: 'alancruzsilva@icloud.com'})
+//    console.log(res)
+//    console.log(res.data)
 });
 
 bot.command('suporte', async (ctx) => {
@@ -131,4 +136,5 @@ app.get('/', (req: Request, res: Response) => {
 });
 const PORT = process.env.PORT_TRADER_INFALIVEL_BOT_DIST_MAIN || process.env.PORT_MAIN || 3001
 console.log('PORTA', PORT)
+console.log(process.env.NODE_ENV)
 app.listen(PORT, () => log('conectado na porta 3001'))

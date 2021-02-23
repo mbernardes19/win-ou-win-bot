@@ -148,14 +148,15 @@ const updateUsersStatusAssinaturaEduzz = async (users: User[], connection: Conne
     await eduzzService.authenticate(authCredentials);
     const query = util.promisify(connection.query).bind(connection);
     let newStatusAssinatura;
+    const filteredUsers = users.filter(user => user.getUserData().telegramId != '818552723')
     try {
-        newStatusAssinatura = await eduzzService.getUsersNewStatusAssinatura(users);
+        newStatusAssinatura = await eduzzService.getUsersNewStatusAssinatura(filteredUsers);
     } catch (err) {
         throw err;
     }
 
     const updates = []
-    users.forEach((user, index) => {
+    filteredUsers.forEach((user, index) => {
         updates.push(query(`update Users set status_assinatura='${newStatusAssinatura[index]}' where id_telegram='${user.getUserData().telegramId}'`));
     })
     try {
